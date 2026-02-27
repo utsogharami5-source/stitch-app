@@ -12,7 +12,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val userDao: com.smartbudge.app.data.local.dao.UserDao,
-    private val networkUtils: com.smartbudge.app.util.NetworkUtils
+    private val networkUtils: com.smartbudge.app.util.NetworkUtils,
+    private val backupRepository: com.smartbudge.app.data.repository.BackupRepository
 ) : ViewModel() {
 
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
@@ -28,7 +29,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun login(email: String, pass: String) {
+    fun login(email: String, pass: String, name: String = "") {
         if (!networkUtils.isNetworkAvailable()) {
             _authState.value = AuthState.Error("No Internet Connection. Please check your network and try again.")
             return
@@ -41,7 +42,21 @@ class AuthViewModel @Inject constructor(
         auth.signInWithEmailAndPassword(email.trim(), pass)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    _authState.value = AuthState.Authenticated
+                    val user = auth.currentUser
+                    if (user != null) {
+                        viewModelScope.launch {
+                            // First, try to restore cloud data
+                            backupRepository.downloadData()
+                            // If a name was provided during login, update it
+                            if (name.isNotBlank()) {
+                                saveUserToDb(user.uid, name, email)
+                                backupRepository.uploadUserProfile()
+                            }
+                            _authState.value = AuthState.Authenticated
+                        }
+                    } else {
+                        _authState.value = AuthState.Authenticated
+                    }
                 } else {
                     val error = task.exception?.message ?: "Login failed"
                     _authState.value = if (error.contains("restricted to administrators")) {
@@ -70,10 +85,15 @@ class AuthViewModel @Inject constructor(
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     if (user != null) {
-                        saveUserToDb(user.uid, name, email)
-                        user.sendEmailVerification()
+                        viewModelScope.launch {
+                            saveUserToDb(user.uid, name, email)
+                            backupRepository.uploadUserProfile()
+                            user.sendEmailVerification()
+                            _authState.value = AuthState.Authenticated
+                        }
+                    } else {
+                        _authState.value = AuthState.Authenticated
                     }
-                    _authState.value = AuthState.Authenticated
                 } else {
                     val error = task.exception?.message ?: "Signup failed"
                     _authState.value = if (error.contains("restricted to administrators")) {
@@ -117,9 +137,14 @@ class AuthViewModel @Inject constructor(
             if (task.isSuccessful) {
                 val user = auth.currentUser
                 if (user != null) {
-                    saveUserToDb(user.uid, name, "")
+                    viewModelScope.launch {
+                        saveUserToDb(user.uid, name, "")
+                        backupRepository.uploadUserProfile()
+                        _authState.value = AuthState.Authenticated
+                    }
+                } else {
+                    _authState.value = AuthState.Authenticated
                 }
-                _authState.value = AuthState.Authenticated
             } else {
                 val error = task.exception?.message ?: "Registration failed"
                 _authState.value = if (error.contains("restricted to administrators")) {

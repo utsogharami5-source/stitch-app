@@ -39,6 +39,21 @@ class BackupRepository @Inject constructor(
         }
     }
 
+    suspend fun uploadUserProfile(): Result<Unit> {
+        return try {
+            val user = userDao.getUser(currentUserId).first()
+            if (user != null) {
+                // Merge user data into existing document
+                db.collection("backups").document(currentUserId)
+                    .update("user", user).await()
+            }
+            Result.success(Unit)
+        } catch (e: Exception) {
+            // If document doesn't exist, use full upload instead
+            uploadData()
+        }
+    }
+
     suspend fun downloadData(): Result<Unit> {
         return try {
             val snapshot = db.collection("backups").document(currentUserId).get().await()

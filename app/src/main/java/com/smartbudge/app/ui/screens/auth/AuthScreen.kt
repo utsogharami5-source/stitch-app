@@ -1,4 +1,5 @@
 package com.smartbudge.app.ui.screens.auth
+import com.smartbudge.app.BuildConfig
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -143,6 +144,21 @@ fun AuthScreen(
                     Spacer(modifier = Modifier.height(32.dp))
                     
                     TextField(
+                        value = displayName,
+                        onValueChange = { displayName = it },
+                        placeholder = { Text("Full Name (Optional)", color = mutedTextColor.copy(alpha = 0.5f)) },
+                        leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = PrimaryBlue) },
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = surfaceColor,
+                            unfocusedContainerColor = surfaceColor,
+                            focusedIndicatorColor = PrimaryBlue,
+                            unfocusedIndicatorColor = Color.Transparent
+                        ),
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    TextField(
                         value = email,
                         onValueChange = { email = it },
                         placeholder = { Text("Email Address", color = mutedTextColor.copy(alpha = 0.5f)) },
@@ -175,7 +191,7 @@ fun AuthScreen(
                     Spacer(modifier = Modifier.height(32.dp))
                     PremiumButton(
                         text = "Login",
-                        onClick = { viewModel.login(email, password) },
+                        onClick = { viewModel.login(email, password, displayName) },
                         modifier = Modifier.fillMaxWidth().height(56.dp)
                     )
                     
@@ -269,7 +285,7 @@ fun AuthScreen(
         
         Spacer(modifier = Modifier.weight(1f))
         Text(
-            text = "Version 1.0.8",
+            text = "Version ${BuildConfig.VERSION_NAME}",
             style = MaterialTheme.typography.labelSmall,
             color = mutedTextColor.copy(alpha = 0.5f)
         )

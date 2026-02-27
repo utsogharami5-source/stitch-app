@@ -56,6 +56,7 @@ class ProfileViewModel @Inject constructor(
                     )
                 )
             }
+            backupRepository.uploadUserProfile()
         }
     }
 
@@ -75,6 +76,7 @@ class ProfileViewModel @Inject constructor(
                     )
                 )
             }
+            backupRepository.uploadUserProfile()
         }
     }
 

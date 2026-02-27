@@ -1,4 +1,5 @@
 package com.smartbudge.app.ui.screens.profile
+import com.smartbudge.app.BuildConfig
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -210,15 +211,22 @@ fun ProfileScreen(
                 ) {
                     Text(text = "App Version", fontSize = 16.sp, color = textColor)
                     Column(horizontalAlignment = Alignment.End) {
-                        Text(text = "1.0.8", fontSize = 16.sp, color = iOSBlue, fontWeight = FontWeight.Medium)
+                        Text(text = BuildConfig.VERSION_NAME, fontSize = 16.sp, color = iOSBlue, fontWeight = FontWeight.Medium)
                         val checkingStatus = viewModel.updateCheckStatus.collectAsState().value
-                        if (checkingStatus != null && !checkingStatus.contains("1.0.8")) {
+                        if (checkingStatus != null && !checkingStatus.contains(BuildConfig.VERSION_NAME)) {
                             Text(text = checkingStatus, fontSize = 12.sp, color = mutedTextColor)
                         }
                     }
                 }
             }
 
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = "Version ${BuildConfig.VERSION_NAME}",
+                style = MaterialTheme.typography.labelSmall,
+                color = mutedTextColor.copy(alpha = 0.5f),
+                modifier = Modifier.align(Alignment.CenterHorizontally).padding(bottom = 8.dp)
+            )
         }
     }
 
