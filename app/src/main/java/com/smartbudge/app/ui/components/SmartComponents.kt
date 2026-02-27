@@ -164,20 +164,6 @@ fun GlowingBackground(modifier: Modifier = Modifier, content: @Composable BoxSco
             .fillMaxSize()
             .background(com.smartbudge.app.ui.theme.BackgroundDark)
     ) {
-        // Soft static center glow
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.radialGradient(
-                        colors = listOf(
-                            Color(0xFF3A2154).copy(alpha = 0.5f), // Soft purple
-                            Color.Transparent
-                        ),
-                        radius = 1200f
-                    )
-                )
-        )
         // Main Content
         content()
     }

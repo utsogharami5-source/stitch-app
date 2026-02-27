@@ -38,8 +38,8 @@ fun SmartBottomBar(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 24.dp),
-        bgColor = if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.04f),
-        isGlass = true,
+        bgColor = CardDark,
+        isGlass = false,
         cornerRadius = 32.dp,
         padding = 0.dp
     ) {

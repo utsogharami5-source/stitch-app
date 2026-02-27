@@ -13,9 +13,9 @@ val iOSOrange = Color(0xFFFF9500)
 // New App Design Colors (SmartBudget Sync)
 val PrimaryBlue = Color(0xFF007AFF)
 val BackgroundLight = Color(0xFFFFFFFF)
-val BackgroundDark = Color(0xFF150824) // Deep purple tint
+val BackgroundDark = Color(0xFF000000) // Completely black
 val CardLight = Color(0xFFFFFFFF)
-val CardDark = Color(0xFF1C1C1E)
+val CardDark = Color(0xFF2C2638) // Slight premium purple
 val TextLight = Color(0xFF000000)
 val TextDark = Color(0xFFFFFFFF)
 val MutedTextLight = Color(0xFF8E8E93)

@@ -184,8 +184,8 @@ fun AppHeader(name: String, isDark: Boolean, onMenuClick: () -> Unit, textColor:
 fun TotalBalanceCard(balance: Double, totalIncome: Double, totalExpense: Double, surfaceColor: Color, textColor: Color, mutedTextColor: Color, isDark: Boolean) {
     PremiumCard(
         modifier = Modifier.fillMaxWidth(),
-        bgColor = if (isDark) Color.Black.copy(alpha = 0.7f) else PrimaryBlue,
-        isGlass = true,
+        bgColor = surfaceColor,
+        isGlass = false,
         cornerRadius = 32.dp,
         padding = 28.dp
     ) {
@@ -281,8 +281,8 @@ fun TransactionItem(
 
     PremiumCard(
         modifier = Modifier.fillMaxWidth().clickable { onClick() },
-        isGlass = true,
-        bgColor = if (isDark) Color.White.copy(alpha = 0.05f) else Color.Black.copy(alpha = 0.03f),
+        isGlass = false,
+        bgColor = surfaceColor,
         padding = 12.dp,
         cornerRadius = 24.dp
     ) {
