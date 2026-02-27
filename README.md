@@ -30,6 +30,21 @@ Whether you're tracking daily expenses, monitoring your overall balance, or anal
 
 ---
 
+## 📸 Screenshots
+
+<div align="center">
+  <h3>🏠 Home & Navigation</h3>
+  <img src="screenshots/home_screen.png" width="30%" alt="Home Screen"/>
+  <img src="screenshots/add_transaction.png" width="30%" alt="Add Transaction"/>
+  <img src="screenshots/profile_screen.png" width="30%" alt="Profile Screen"/>
+  <br/><br/>
+  <h3>📊 Insights & Goals</h3>
+  <img src="screenshots/reports_screen.png" width="30%" alt="Reports Screen"/>
+  <img src="screenshots/savings_goals.png" width="30%" alt="Savings Goals"/>
+</div>
+
+---
+
 ## 🛠️ Technology Stack
 
 This application leverages modern Android development best practices and libraries:
