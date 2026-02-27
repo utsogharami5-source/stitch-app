@@ -39,7 +39,7 @@ fun SmartBottomBar(
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 24.dp),
         bgColor = CardDark,
-        isGlass = false,
+        isGlass = true,
         cornerRadius = 32.dp,
         padding = 0.dp
     ) {

@@ -185,7 +185,7 @@ fun TotalBalanceCard(balance: Double, totalIncome: Double, totalExpense: Double,
     PremiumCard(
         modifier = Modifier.fillMaxWidth(),
         bgColor = surfaceColor,
-        isGlass = false,
+        isGlass = true,
         cornerRadius = 32.dp,
         padding = 28.dp
     ) {
@@ -281,7 +281,7 @@ fun TransactionItem(
 
     PremiumCard(
         modifier = Modifier.fillMaxWidth().clickable { onClick() },
-        isGlass = false,
+        isGlass = true,
         bgColor = surfaceColor,
         padding = 12.dp,
         cornerRadius = 24.dp
