@@ -44,9 +44,11 @@ fun CategoryModuleScreen(
     val surfaceColor = if (isDark) CardDark else CardLight
 
     val accentColor = when (categoryName.lowercase()) {
-        "food" -> iOSGreen
-        "entertainment" -> iOSPurple
-        "utilities" -> iOSBlue
+        "food & dining" -> iOSOrange
+        "transportation" -> iOSBlue
+        "housing & utilities" -> iOSRed
+        "shopping" -> iOSPurple
+        "healthcare" -> iOSPink // Note: Assuming iOSPink or similar, using iOSPurple for now if PINK missing
         else -> PrimaryBlue
     }
 

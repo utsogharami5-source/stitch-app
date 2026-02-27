@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.smartbudge.app.ui.components.PremiumCard
+import com.smartbudge.app.ui.components.PremiumButton
 import com.smartbudge.app.ui.components.SmartTextField
 import com.smartbudge.app.ui.theme.*
 import kotlinx.coroutines.delay
@@ -108,27 +109,44 @@ fun ProfileScreen(
                 padding = 16.dp,
                 cornerRadius = 24.dp
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(text = "Sync with Firebase", fontWeight = FontWeight.Medium, color = textColor)
-                        Text(text = "Backup your data to the cloud", fontSize = 12.sp, color = mutedTextColor)
+                Column {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(text = "Sync with Firebase", fontWeight = FontWeight.Medium, color = textColor)
+                            val lastBackup by viewModel.lastBackupTime.collectAsState()
+                            val lastBackupText = if (lastBackup > 0) {
+                                val sdf = java.text.SimpleDateFormat("MMM dd, yyyy HH:mm", java.util.Locale.getDefault())
+                                "Last Backup: ${sdf.format(java.util.Date(lastBackup))}"
+                            } else {
+                                "Backup your data to the cloud"
+                            }
+                            Text(text = lastBackupText, fontSize = 12.sp, color = mutedTextColor)
+                        }
                     }
-                    Row {
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         TextButton(
                             onClick = { 
                                 if (!isLoggedIn) onLoginRequired() else viewModel.downloadBackup() 
                             }
                         ) {
-                            Text("Restore", color = PrimaryBlue)
+                            Text("Restore Data", color = PrimaryBlue, fontSize = 14.sp)
                         }
-                        Spacer(modifier = Modifier.width(8.dp))
+                        
+                        Spacer(modifier = Modifier.width(12.dp))
                         
                         val isBackupSuccess = backupStatus == "Backup Successful"
-                        Button(
+                        PremiumButton(
+                            text = if (isBackupSuccess) "Backup Completed" else "Backup Now",
                             onClick = {
                                 if (!isLoggedIn) {
                                     onLoginRequired()
@@ -136,28 +154,29 @@ fun ProfileScreen(
                                     viewModel.uploadBackup() 
                                 }
                             },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = if (isBackupSuccess) com.smartbudge.app.ui.theme.CardLight else PrimaryBlue
-                            ),
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
-                            Text(if (isBackupSuccess) "Backup Completed" else "Backup", color = if (isBackupSuccess) com.smartbudge.app.ui.theme.PrimaryBlue else Color.White)
-                        }
+                            colors = if (isBackupSuccess) listOf(Color(0xFF34C759), Color(0xFF248A3D)) else PrimaryGradient,
+                            modifier = Modifier.height(44.dp)
+                        )
                     }
                 }
             }
 
-            if (isLoggedIn) {
-                Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
-                Button(
+            // Logout Button - check isLoggedIn carefully
+            if (isLoggedIn) {
+                PremiumButton(
+                    text = "Sign Out Account",
                     onClick = onLogout,
-                    modifier = Modifier.fillMaxWidth().height(50.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = iOSRed.copy(alpha = 0.8f)),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text("Logout", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                }
+                    modifier = Modifier.fillMaxWidth().height(52.dp),
+                    colors = listOf(iOSRed, iOSRed.copy(alpha = 0.7f))
+                )
+            } else {
+                PremiumButton(
+                    text = "Sign In / Register",
+                    onClick = onLoginRequired,
+                    modifier = Modifier.fillMaxWidth().height(52.dp)
+                )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -190,13 +209,13 @@ fun ProfileScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(text = "App Version", fontSize = 16.sp, color = textColor)
-                    val checkingStatus = viewModel.updateCheckStatus.collectAsState().value
-                    Text(
-                        text = checkingStatus ?: "Check for Updates", 
-                        fontSize = 16.sp, 
-                        color = if (checkingStatus == null) com.smartbudge.app.ui.theme.PrimaryBlue else mutedTextColor, 
-                        fontWeight = FontWeight.Medium
-                    )
+                    Column(horizontalAlignment = Alignment.End) {
+                        Text(text = "1.0.8", fontSize = 16.sp, color = iOSBlue, fontWeight = FontWeight.Medium)
+                        val checkingStatus = viewModel.updateCheckStatus.collectAsState().value
+                        if (checkingStatus != null && !checkingStatus.contains("1.0.8")) {
+                            Text(text = checkingStatus, fontSize = 12.sp, color = mutedTextColor)
+                        }
+                    }
                 }
             }
 
@@ -263,8 +282,9 @@ fun EditValueDialog(
         PremiumCard(
             modifier = Modifier.fillMaxWidth(),
             isGlass = true,
-            bgColor = Color.Black.copy(alpha = 0.05f), // Subtly different for dialogs
-            padding = 24.dp
+            bgColor = Color.White.copy(alpha = 0.1f), // Better contrast for dialogs
+            padding = 20.dp,
+            cornerRadius = 28.dp
         ) {
             Text(text = title, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
             Spacer(modifier = Modifier.height(16.dp))

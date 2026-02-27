@@ -266,6 +266,13 @@ fun AuthScreen(
             Spacer(modifier = Modifier.height(16.dp))
             CircularProgressIndicator(color = PrimaryBlue, strokeWidth = 3.dp)
         }
+        
+        Spacer(modifier = Modifier.weight(1f))
+        Text(
+            text = "Version 1.0.8",
+            style = MaterialTheme.typography.labelSmall,
+            color = mutedTextColor.copy(alpha = 0.5f)
+        )
     }
 }
 

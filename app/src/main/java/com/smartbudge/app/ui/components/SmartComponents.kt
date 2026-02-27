@@ -39,8 +39,18 @@ fun PremiumButton(
     Box(
         modifier = modifier
             .graphicsLayer(scaleX = scale, scaleY = scale)
-            .clip(RoundedCornerShape(16.dp))
-            .background(Brush.horizontalGradient(colors))
+            .clip(RoundedCornerShape(12.dp))
+            .background(
+                brush = Brush.horizontalGradient(colors),
+                alpha = 0.95f // Slightly more opaque matte
+            )
+            .border(
+                width = 1.dp,
+                brush = Brush.verticalGradient(
+                    listOf(Color.White.copy(alpha = 0.2f), Color.Transparent)
+                ),
+                shape = RoundedCornerShape(12.dp)
+            )
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
@@ -49,15 +59,17 @@ fun PremiumButton(
                     onClick()
                 }
             )
-            .padding(vertical = 14.dp, horizontal = 24.dp),
+            .padding(horizontal = 16.dp), // Removed fixed vertical padding to allow height to govern
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = text,
             color = Color.White,
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.Bold,
-            fontSize = 16.sp
+            fontSize = 14.sp,
+            maxLines = 1,
+            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
         )
     }
 
@@ -76,9 +88,10 @@ fun MeshGradient(
 ) {
     Box(modifier = modifier.background(Color.Black)) {
         colors.forEachIndexed { index, color ->
-            var offset by remember { mutableStateOf(androidx.compose.ui.geometry.Offset.Zero) }
-            val xAnim by animateFloatAsState(
-                targetValue = if (offset == androidx.compose.ui.geometry.Offset.Zero) 0f else 1f,
+            val infiniteTransition = rememberInfiniteTransition(label = "mesh")
+            val xOffset by infiniteTransition.animateFloat(
+                initialValue = -100f,
+                targetValue = 100f,
                 animationSpec = infiniteRepeatable(
                     animation = tween(durationMillis = 3000 + index * 500, easing = LinearEasing),
                     repeatMode = RepeatMode.Reverse
@@ -90,16 +103,16 @@ fun MeshGradient(
                 modifier = Modifier
                     .fillMaxSize()
                     .graphicsLayer(
-                        translationX = (xAnim * 200 - 100).dp.value,
-                        translationY = (index * 100).dp.value,
-                        alpha = 0.4f,
-                        scaleX = 2f,
-                        scaleY = 2f
+                        translationX = xOffset.dp.value,
+                        translationY = (index * 120).dp.value,
+                        alpha = 0.3f,
+                        scaleX = 2.5f,
+                        scaleY = 2.5f
                     )
                     .background(
                         Brush.radialGradient(
                             listOf(color, Color.Transparent),
-                            radius = 600f
+                            radius = 700f
                         )
                     )
             )
@@ -118,7 +131,8 @@ fun PremiumCard(
     isGlass: Boolean = false,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    val finalBg = if (isGlass) bgColor.copy(alpha = 0.18f) else bgColor
+    // Matte glass effect: more opaque background + diffuse border
+    val finalBg = if (isGlass) bgColor.copy(alpha = 0.22f) else bgColor
     
     Surface(
         modifier = modifier
@@ -126,16 +140,13 @@ fun PremiumCard(
             .then(
                 if (isGlass) {
                     Modifier
-                        .drawWithContent {
-                            drawContent()
-                        }
                         .border(
-                            width = 1.2.dp,
+                            width = 1.dp,
                             brush = Brush.linearGradient(
                                 colors = listOf(
-                                    Color.White.copy(alpha = 0.5f),
-                                    Color.White.copy(alpha = 0.1f),
-                                    Color.White.copy(alpha = 0.2f)
+                                    Color.White.copy(alpha = 0.25f),
+                                    Color.White.copy(alpha = 0.05f),
+                                    Color.White.copy(alpha = 0.15f)
                                 )
                             ),
                             shape = RoundedCornerShape(cornerRadius)
@@ -144,7 +155,7 @@ fun PremiumCard(
             ),
         color = finalBg,
         contentColor = MaterialTheme.colorScheme.onSurface,
-        shadowElevation = if (isGlass) 0.dp else elevation
+        shadowElevation = if (isGlass) 2.dp else elevation // Slight elevation for matte depth
     ) {
         Column(
             modifier = Modifier.padding(padding)

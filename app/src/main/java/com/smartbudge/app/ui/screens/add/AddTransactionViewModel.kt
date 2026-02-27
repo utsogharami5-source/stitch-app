@@ -113,50 +113,21 @@ class AddTransactionViewModel @Inject constructor(
             categoryDao.getAllCategories(currentUserId).first().let {
                 if (it.isEmpty()) {
                     val defaultCategories = listOf(
-                        // Income Categories (User Provided)
-                        CategoryEntity(name = "Base Salary", type = "Income", color = "#34C759", user_id = currentUserId),
-                        CategoryEntity(name = "Wages", type = "Income", color = "#34C759", user_id = currentUserId),
-                        CategoryEntity(name = "Overtime Pay", type = "Income", color = "#34C759", user_id = currentUserId),
-                        CategoryEntity(name = "Bonuses", type = "Income", color = "#34C759", user_id = currentUserId),
-                        CategoryEntity(name = "Commissions", type = "Income", color = "#34C759", user_id = currentUserId),
-                        CategoryEntity(name = "Tips/Gratuities", type = "Income", color = "#34C759", user_id = currentUserId),
-                        CategoryEntity(name = "Freelance Fees", type = "Income", color = "#34C759", user_id = currentUserId),
-                        CategoryEntity(name = "Product Sales", type = "Income", color = "#34C759", user_id = currentUserId),
-                        CategoryEntity(name = "Service Revenue", type = "Income", color = "#34C759", user_id = currentUserId),
-                        CategoryEntity(name = "Ad Revenue", type = "Income", color = "#34C759", user_id = currentUserId),
-                        CategoryEntity(name = "Sponsorships", type = "Income", color = "#34C759", user_id = currentUserId),
-                        CategoryEntity(name = "Dividends", type = "Income", color = "#34C759", user_id = currentUserId),
-                        CategoryEntity(name = "Interest Income", type = "Income", color = "#34C759", user_id = currentUserId),
-                        CategoryEntity(name = "Rental Income", type = "Income", color = "#34C759", user_id = currentUserId),
-                        CategoryEntity(name = "Capital Gains", type = "Income", color = "#34C759", user_id = currentUserId),
-                        CategoryEntity(name = "Royalties", type = "Income", color = "#34C759", user_id = currentUserId),
-                        CategoryEntity(name = "Tax Refunds", type = "Income", color = "#34C759", user_id = currentUserId),
-                        CategoryEntity(name = "Grants/Scholarships", type = "Income", color = "#34C759", user_id = currentUserId),
-                        CategoryEntity(name = "Retirement Pay", type = "Income", color = "#34C759", user_id = currentUserId),
-                        CategoryEntity(name = "Gifts/Inheritance", type = "Income", color = "#34C759", user_id = currentUserId),
+                        // Income Categories (6)
+                        CategoryEntity(name = "Salary", type = "Income", color = "#34C759", user_id = currentUserId),
+                        CategoryEntity(name = "Freelance", type = "Income", color = "#34C759", user_id = currentUserId),
+                        CategoryEntity(name = "Investments", type = "Income", color = "#34C759", user_id = currentUserId),
+                        CategoryEntity(name = "Gifts", type = "Income", color = "#34C759", user_id = currentUserId),
+                        CategoryEntity(name = "Rental", type = "Income", color = "#34C759", user_id = currentUserId),
                         CategoryEntity(name = "Other Income", type = "Income", color = "#34C759", user_id = currentUserId),
                         
-                        // Expense Categories (User Provided)
-                        CategoryEntity(name = "Housing/Rent", type = "Expense", color = "#FF3B30", user_id = currentUserId),
-                        CategoryEntity(name = "Utilities", type = "Expense", color = "#AF52DE", user_id = currentUserId),
-                        CategoryEntity(name = "Insurance", type = "Expense", color = "#5856D6", user_id = currentUserId),
-                        CategoryEntity(name = "Debt Payments", type = "Expense", color = "#FF2D55", user_id = currentUserId),
-                        CategoryEntity(name = "Internet & Phone", type = "Expense", color = "#007AFF", user_id = currentUserId),
-                        CategoryEntity(name = "Groceries", type = "Expense", color = "#34C759", user_id = currentUserId),
-                        CategoryEntity(name = "Dining Out", type = "Expense", color = "#FF9500", user_id = currentUserId),
+                        // Expense Categories (6)
+                        CategoryEntity(name = "Food & Dining", type = "Expense", color = "#FF9500", user_id = currentUserId),
                         CategoryEntity(name = "Transportation", type = "Expense", color = "#5AC8FA", user_id = currentUserId),
-                        CategoryEntity(name = "Vehicle Maintenance", type = "Expense", color = "#8E8E93", user_id = currentUserId),
+                        CategoryEntity(name = "Housing & Utilities", type = "Expense", color = "#FF3B30", user_id = currentUserId),
+                        CategoryEntity(name = "Shopping", type = "Expense", color = "#AF52DE", user_id = currentUserId),
                         CategoryEntity(name = "Healthcare", type = "Expense", color = "#FF2D55", user_id = currentUserId),
-                        CategoryEntity(name = "Shopping/Apparel", type = "Expense", color = "#FF9500", user_id = currentUserId),
-                        CategoryEntity(name = "Entertainment", type = "Expense", color = "#AF52DE", user_id = currentUserId),
-                        CategoryEntity(name = "Personal Care", type = "Expense", color = "#FF3B30", user_id = currentUserId),
-                        CategoryEntity(name = "Education", type = "Expense", color = "#5856D6", user_id = currentUserId),
-                        CategoryEntity(name = "Fitness", type = "Expense", color = "#007AFF", user_id = currentUserId),
-                        CategoryEntity(name = "Gifts & Donations", type = "Expense", color = "#34C759", user_id = currentUserId),
-                        CategoryEntity(name = "Home Improvement", type = "Expense", color = "#FFCC00", user_id = currentUserId),
-                        CategoryEntity(name = "Travel", type = "Expense", color = "#5AC8FA", user_id = currentUserId),
-                        CategoryEntity(name = "Pet Care", type = "Expense", color = "#FF9500", user_id = currentUserId),
-                        CategoryEntity(name = "Savings/Emergency", type = "Expense", color = "#34C759", user_id = currentUserId)
+                        CategoryEntity(name = "Other Expenses", type = "Expense", color = "#8E8E93", user_id = currentUserId)
                     )
                     defaultCategories.forEach { category ->
                         categoryDao.insertCategory(category)

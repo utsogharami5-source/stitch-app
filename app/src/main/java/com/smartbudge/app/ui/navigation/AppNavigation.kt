@@ -160,7 +160,7 @@ fun AppNavigation(authViewModel: AuthViewModel = hiltViewModel()) {
 
             composable("profile") {
                 ProfileScreen(
-                    isLoggedIn = authState is AuthState.Authenticated,
+                    isLoggedIn = authViewModel.isLoggedIn(),
                     isAnonymous = authViewModel.isUserAnonymous(),
                     onLoginRequired = {
                         authViewModel.logout()

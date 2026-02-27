@@ -9,6 +9,7 @@ val iOSGreen = Color(0xFF34C759)
 val iOSRed = Color(0xFFFF3B30)
 val iOSPurple = Color(0xFF5856D6)
 val iOSOrange = Color(0xFFFF9500)
+val iOSPink = Color(0xFFFF2D55)
 
 // New App Design Colors (SmartBudget Sync)
 val PrimaryBlue = Color(0xFF007AFF)

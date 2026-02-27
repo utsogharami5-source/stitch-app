@@ -26,9 +26,11 @@ class CategoryModuleViewModel @Inject constructor(
             if (name.isEmpty()) flowOf(emptyList())
             else {
                 val namesToMatch = when (name.lowercase()) {
-                    "food" -> listOf("Food & Drinks", "Groceries", "Dining Out")
-                    "entertainment" -> listOf("Entertainment")
-                    "utilities" -> listOf("Utilities", "Internet & Phone")
+                    "food & dining" -> listOf("Food & Dining", "Groceries", "Dining Out")
+                    "transportation" -> listOf("Transportation")
+                    "housing & utilities" -> listOf("Housing & Utilities", "Utilities", "Internet & Phone", "Housing/Rent")
+                    "shopping" -> listOf("Shopping", "Shopping/Apparel")
+                    "healthcare" -> listOf("Healthcare")
                     else -> listOf(name)
                 }
                 

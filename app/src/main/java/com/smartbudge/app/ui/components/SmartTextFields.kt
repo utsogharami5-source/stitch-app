@@ -1,16 +1,15 @@
 package com.smartbudge.app.ui.components
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import com.smartbudge.app.ui.theme.PrimaryBlue
 import androidx.compose.ui.unit.dp
 
 import androidx.compose.ui.text.input.VisualTransformation
@@ -35,13 +34,13 @@ fun SmartTextField(
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(16.dp),
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = MaterialTheme.colorScheme.primary,
-            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
-            containerColor = Color.Transparent,
-            focusedLabelColor = MaterialTheme.colorScheme.primary,
-            unfocusedLabelColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+            focusedBorderColor = PrimaryBlue,
+            unfocusedBorderColor = Color.White.copy(alpha = 0.12f),
+            containerColor = Color.White.copy(alpha = 0.05f),
+            focusedLabelColor = PrimaryBlue,
+            unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
         ),
         keyboardOptions = keyboardOptions,
         visualTransformation = visualTransformation,

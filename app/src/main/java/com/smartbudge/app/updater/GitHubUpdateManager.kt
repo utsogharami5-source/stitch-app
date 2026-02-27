@@ -24,7 +24,12 @@ class GitHubUpdateManager(private val context: Context) {
     private val TAG = "GitHubUpdateManager"
 
     // Data class to hold release information
-    data class ReleaseInfo(val versionName: String, val downloadUrl: String, val releaseNotes: String)
+    data class ReleaseInfo(
+        val versionName: String,
+        val downloadUrl: String,
+        val releaseNotes: String,
+        val releaseUrl: String
+    )
 
     /**
      * Checks if the device has an active internet connection.
@@ -73,6 +78,7 @@ class GitHubUpdateManager(private val context: Context) {
                 }
                 
                 val releaseNotes = jsonObject.optString("body", "No release notes provided.")
+                val releaseUrl = jsonObject.getString("html_url")
 
                 val assetsArray = jsonObject.getJSONArray("assets")
                 var downloadUrl: String? = null
@@ -87,7 +93,7 @@ class GitHubUpdateManager(private val context: Context) {
 
                 if (downloadUrl != null && isNewerVersion(currentVersion, tagName)) {
                     Log.d(TAG, "Update available: $tagName")
-                    return@withContext ReleaseInfo(tagName, downloadUrl, releaseNotes)
+                    return@withContext ReleaseInfo(tagName, downloadUrl, releaseNotes, releaseUrl)
                 } else {
                     Log.d(TAG, "App is up to date. Current: $currentVersion, Remote: $tagName")
                 }
@@ -98,6 +104,20 @@ class GitHubUpdateManager(private val context: Context) {
             Log.e(TAG, "Error checking for updates", e)
         }
         return@withContext null
+    }
+
+    /**
+     * Opens a URL in the system browser.
+     */
+    fun openUrl(url: String) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to open URL: $url", e)
+        }
     }
 
     /**

@@ -41,7 +41,7 @@ class AuthViewModel @Inject constructor(
         auth.signInWithEmailAndPassword(email.trim(), pass)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    _authState.value = AuthState.Success("Logged in successfully!")
+                    _authState.value = AuthState.Authenticated
                 } else {
                     val error = task.exception?.message ?: "Login failed"
                     _authState.value = if (error.contains("restricted to administrators")) {
@@ -71,10 +71,9 @@ class AuthViewModel @Inject constructor(
                     val user = auth.currentUser
                     if (user != null) {
                         saveUserToDb(user.uid, name, email)
-                        // Trigger email verification (serves as welcome/setup)
                         user.sendEmailVerification()
                     }
-                    _authState.value = AuthState.Success("Account created successfully! A verification email has been sent.")
+                    _authState.value = AuthState.Authenticated
                 } else {
                     val error = task.exception?.message ?: "Signup failed"
                     _authState.value = if (error.contains("restricted to administrators")) {
@@ -120,7 +119,7 @@ class AuthViewModel @Inject constructor(
                 if (user != null) {
                     saveUserToDb(user.uid, name, "")
                 }
-                _authState.value = AuthState.Success("Welcome to SmartBudge!")
+                _authState.value = AuthState.Authenticated
             } else {
                 val error = task.exception?.message ?: "Registration failed"
                 _authState.value = if (error.contains("restricted to administrators")) {
@@ -132,6 +131,10 @@ class AuthViewModel @Inject constructor(
 
     fun isUserAnonymous(): Boolean {
         return auth.currentUser?.isAnonymous ?: true
+    }
+
+    fun isLoggedIn(): Boolean {
+        return auth.currentUser != null
     }
 
     private fun saveUserToDb(uid: String, name: String, email: String) {
@@ -154,7 +157,9 @@ class AuthViewModel @Inject constructor(
     }
     
     fun resetState() {
-        _authState.value = AuthState.Idle
+        if (_authState.value !is AuthState.Authenticated) {
+            _authState.value = AuthState.Idle
+        }
     }
 }
 

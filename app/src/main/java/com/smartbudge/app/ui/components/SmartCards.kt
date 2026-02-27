@@ -1,5 +1,6 @@
 package com.smartbudge.app.ui.components
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -14,13 +15,21 @@ import androidx.compose.ui.unit.dp
 fun SmartCard(
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
-    elevation: androidx.compose.ui.unit.Dp = 4.dp,
+    elevation: androidx.compose.ui.unit.Dp = 2.dp,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Card(
-        modifier = modifier,
+        modifier = modifier.border(
+            width = 1.dp,
+            brush = androidx.compose.ui.graphics.Brush.verticalGradient(
+                listOf(Color.White.copy(alpha = 0.12f), Color.Transparent)
+            ),
+            shape = RoundedCornerShape(16.dp)
+        ),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = backgroundColor),
+        colors = CardDefaults.cardColors(
+            containerColor = backgroundColor.copy(alpha = 0.95f)
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = elevation),
         content = content
     )

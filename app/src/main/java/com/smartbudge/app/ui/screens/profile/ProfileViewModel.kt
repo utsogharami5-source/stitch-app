@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.smartbudge.app.updater.GitHubUpdateManager
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
@@ -27,9 +28,13 @@ class ProfileViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     val isDarkMode: StateFlow<Boolean> = preferenceRepository.isDarkMode
+    val lastBackupTime: StateFlow<Long> = preferenceRepository.lastBackupTime
 
     private val _backupStatus = MutableStateFlow<String?>(null)
     val backupStatus: StateFlow<String?> = _backupStatus.asStateFlow()
+
+    private val _updateCheckStatus = MutableStateFlow<String?>(null)
+    val updateCheckStatus: StateFlow<String?> = _updateCheckStatus.asStateFlow()
 
     fun toggleDarkMode(enabled: Boolean) {
         preferenceRepository.setDarkMode(enabled)
@@ -81,7 +86,13 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             _backupStatus.value = "Uploading..."
             val result = backupRepository.uploadData()
-            _backupStatus.value = if (result.isSuccess) "Backup Successful" else "Backup Failed: ${result.exceptionOrNull()?.message}"
+            if (result.isSuccess) {
+                val time = System.currentTimeMillis()
+                preferenceRepository.setLastBackupTime(time)
+                _backupStatus.value = "Backup Successful"
+            } else {
+                _backupStatus.value = "Backup Failed: ${result.exceptionOrNull()?.message}"
+            }
         }
     }
 
@@ -93,12 +104,16 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             _backupStatus.value = "Downloading..."
             val result = backupRepository.downloadData()
-            _backupStatus.value = if (result.isSuccess) "Restore Successful" else "Restore Failed: ${result.exceptionOrNull()?.message}"
+            if (result.isSuccess) {
+                _backupStatus.value = "Restore Successful"
+            } else {
+                _backupStatus.value = "Restore Failed: ${result.exceptionOrNull()?.message}"
+            }
         }
     }
 
-    private val _updateCheckStatus = MutableStateFlow<String?>(null)
-    val updateCheckStatus: StateFlow<String?> = _updateCheckStatus.asStateFlow()
+    private val _updateInfo = MutableStateFlow<GitHubUpdateManager.ReleaseInfo?>(null)
+    val updateInfo: StateFlow<GitHubUpdateManager.ReleaseInfo?> = _updateInfo.asStateFlow()
 
     fun checkForUpdates(context: android.content.Context) {
         viewModelScope.launch {
@@ -116,18 +131,12 @@ class ProfileViewModel @Inject constructor(
                 val currentVersion = packageInfo.versionName ?: "1.0.0"
                 
                 val releaseInfo = updateManager.checkForUpdates(currentVersion)
+                _updateInfo.value = releaseInfo
+                
                 if (releaseInfo != null) {
                     _updateCheckStatus.value = "Update Available (${releaseInfo.versionName})"
-                    if (!updateManager.hasStoragePermission()) {
-                        _updateCheckStatus.value = "Storage Permission Required"
-                        android.widget.Toast.makeText(context, "Please grant storage permission in settings to update.", android.widget.Toast.LENGTH_LONG).show()
-                    } else if (updateManager.canInstallPackages()) {
-                        android.widget.Toast.makeText(context, "Starting Download...", android.widget.Toast.LENGTH_SHORT).show()
-                        updateManager.downloadAndInstallUpdate(releaseInfo)
-                    } else {
-                        android.widget.Toast.makeText(context, "Please allow installation from unknown sources", android.widget.Toast.LENGTH_LONG).show()
-                        updateManager.requestInstallPermission()
-                    }
+                    // If permissions are ready, we can offer to start it
+                    // But usually, manual check just shows the status
                 } else {
                     _updateCheckStatus.value = "Up to date"
                     kotlinx.coroutines.delay(2000)
@@ -137,6 +146,25 @@ class ProfileViewModel @Inject constructor(
                 _updateCheckStatus.value = "Check failed"
                 kotlinx.coroutines.delay(2000)
                 _updateCheckStatus.value = null
+            }
+        }
+    }
+
+    fun openReleasePage(context: android.content.Context) {
+        _updateInfo.value?.let { info ->
+            com.smartbudge.app.updater.GitHubUpdateManager(context).openUrl(info.releaseUrl)
+        }
+    }
+
+    fun startUpdate(context: android.content.Context) {
+        _updateInfo.value?.let { info ->
+            val updateManager = com.smartbudge.app.updater.GitHubUpdateManager(context)
+            if (!updateManager.hasStoragePermission()) {
+                _updateCheckStatus.value = "Storage Permission Required"
+            } else if (updateManager.canInstallPackages()) {
+                updateManager.downloadAndInstallUpdate(info)
+            } else {
+                updateManager.requestInstallPermission()
             }
         }
     }

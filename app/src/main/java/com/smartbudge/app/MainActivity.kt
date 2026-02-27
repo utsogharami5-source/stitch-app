@@ -12,6 +12,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
+import androidx.compose.ui.unit.dp
 import com.smartbudge.app.ui.navigation.AppNavigation
 import com.smartbudge.app.ui.theme.SmartBudgeTheme
 import androidx.activity.viewModels
@@ -24,8 +28,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import com.smartbudge.app.updater.GitHubUpdateManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -95,23 +97,34 @@ class MainActivity : ComponentActivity() {
                                      "${release.releaseNotes}") 
                             },
                             confirmButton = {
-                                TextButton(onClick = {
-                                    if (updateManager.isNetworkAvailable()) {
-                                        if (!updateManager.hasStoragePermission()) {
-                                            storagePermissionLauncher.launch(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                        } else if (!updateManager.canInstallPackages()) {
-                                            android.widget.Toast.makeText(this@MainActivity, "Please allow installation from unknown sources", android.widget.Toast.LENGTH_LONG).show()
-                                            updateManager.requestInstallPermission()
-                                        } else {
-                                            updateInfo = null
-                                            android.widget.Toast.makeText(this@MainActivity, "Starting Download...", android.widget.Toast.LENGTH_SHORT).show()
-                                            updateManager.downloadAndInstallUpdate(release)
-                                        }
-                                    } else {
-                                        showNoInternetDialog = true
+                                Row {
+                                    TextButton(onClick = {
+                                        updateInfo = null
+                                        updateManager.openUrl(release.releaseUrl)
+                                    }) {
+                                        Text("Via Browser")
                                     }
-                                }) {
-                                    Text("Download & Install")
+                                    
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    
+                                    TextButton(onClick = {
+                                        if (updateManager.isNetworkAvailable()) {
+                                            if (!updateManager.hasStoragePermission()) {
+                                                storagePermissionLauncher.launch(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                            } else if (!updateManager.canInstallPackages()) {
+                                                android.widget.Toast.makeText(this@MainActivity, "Please allow installation from unknown sources", android.widget.Toast.LENGTH_LONG).show()
+                                                updateManager.requestInstallPermission()
+                                            } else {
+                                                updateInfo = null
+                                                android.widget.Toast.makeText(this@MainActivity, "Starting Download...", android.widget.Toast.LENGTH_SHORT).show()
+                                                updateManager.downloadAndInstallUpdate(release)
+                                            }
+                                        } else {
+                                            showNoInternetDialog = true
+                                        }
+                                    }) {
+                                        Text("Direct Update")
+                                    }
                                 }
                             },
                             dismissButton = {
