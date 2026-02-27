@@ -1,5 +1,3 @@
-<div align="center">
-  <img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp" alt="Stitch Logo" width="120"/>
 
   #
   (SmartBudge)
