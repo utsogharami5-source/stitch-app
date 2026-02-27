@@ -27,16 +27,40 @@ class GitHubUpdateManager(private val context: Context) {
     data class ReleaseInfo(val versionName: String, val downloadUrl: String, val releaseNotes: String)
 
     /**
+     * Checks if the device has an active internet connection.
+     */
+    fun isNetworkAvailable(): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as android.net.ConnectivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val network = connectivityManager.activeNetwork ?: return false
+            val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+            return activeNetwork.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        } else {
+            @Suppress("DEPRECATION")
+            val networkInfo = connectivityManager.activeNetworkInfo ?: return false
+            @Suppress("DEPRECATION")
+            return networkInfo.isConnected
+        }
+    }
+
+    /**
      * Checks the GitHub API for the latest release.
      * Compares the remote version with the currently installed version.
      * Returns a ReleaseInfo object if a newer version is available, null otherwise.
      */
     suspend fun checkForUpdates(currentVersion: String): ReleaseInfo? = withContext(Dispatchers.IO) {
+        if (!isNetworkAvailable()) {
+            Log.d(TAG, "No internet connection available for update check.")
+            return@withContext null
+        }
+
         try {
             val url = URL("https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/releases/latest")
             val connection = url.openConnection() as HttpURLConnection
             connection.requestMethod = "GET"
             connection.setRequestProperty("Accept", "application/vnd.github.v3+json")
+            connection.connectTimeout = 10000
+            connection.readTimeout = 10000
 
             if (connection.responseCode == HttpURLConnection.HTTP_OK) {
                 val response = connection.inputStream.bufferedReader().use { it.readText() }
@@ -98,46 +122,52 @@ class GitHubUpdateManager(private val context: Context) {
      * and automatically triggers the installation intent when finished.
      */
     fun downloadAndInstallUpdate(releaseInfo: ReleaseInfo) {
+        if (!isNetworkAvailable()) {
+            Log.e(TAG, "No internet connection available for download.")
+            return
+        }
+
         try {
             val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             val uri = Uri.parse(releaseInfo.downloadUrl)
             
-            val fileName = "stitch_update_v${releaseInfo.versionName}.apk"
+            val fileName = "stitch_update.apk"
             
-            // Delete previous download if it exists to avoid FileUriExposedException on some devices
-            val existingFile = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), fileName)
-            if (existingFile.exists()) {
-                existingFile.delete()
+            // Files in app-specific directory are safer
+            val destinationFile = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), fileName)
+            if (destinationFile.exists()) {
+                destinationFile.delete()
             }
 
             val request = DownloadManager.Request(uri)
-                .setTitle("Downloading Stitch Update")
+                .setTitle("Downloading SmartBudge Update")
                 .setDescription("Version ${releaseInfo.versionName}")
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                 .setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS, fileName)
                 .setAllowedOverMetered(true)
                 .setAllowedOverRoaming(true)
+                .setMimeType("application/vnd.android.package-archive")
 
             val downloadId = downloadManager.enqueue(request)
-            
             Log.d(TAG, "Download enqueued with ID: $downloadId")
 
-            // Register a receiver to know when the download is complete
+            // Register receiver
             val onComplete = object : BroadcastReceiver() {
                 override fun onReceive(ctxt: Context, intent: Intent) {
-                    val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+                    val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1L)
                     if (downloadId == id) {
-                        Log.d(TAG, "Download complete. Starting installation.")
-                        installApk(fileName)
+                        Log.d(TAG, "Download complete. Tricking installation.")
                         context.unregisterReceiver(this)
+                        installApk(destinationFile)
                     }
                 }
             }
             
+            val filter = IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                context.registerReceiver(onComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE), Context.RECEIVER_EXPORTED)
+                context.registerReceiver(onComplete, filter, Context.RECEIVER_EXPORTED)
             } else {
-                context.registerReceiver(onComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+                context.registerReceiver(onComplete, filter)
             }
             
         } catch (e: Exception) {
@@ -145,29 +175,33 @@ class GitHubUpdateManager(private val context: Context) {
         }
     }
 
-    private fun installApk(fileName: String) {
+    private fun installApk(file: File) {
         try {
-            val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), fileName)
             if (!file.exists()) {
-                Log.e(TAG, "APK file not found for installation: ${file.absolutePath}")
+                Log.e(TAG, "APK file not found: ${file.absolutePath}")
                 return
             }
 
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.setDataAndType(
-                FileProvider.getUriForFile(
-                    context,
-                    "${context.packageName}.fileprovider",
-                    file
-                ),
-                "application/vnd.android.package-archive"
+            val apkUri = FileProvider.getUriForFile(
+                context,
+                "${context.packageName}.fileprovider",
+                file
             )
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(apkUri, "application/vnd.android.package-archive")
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                // For modern Android, explicit package name can help
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                }
+            }
             
+            Log.d(TAG, "Starting installation intent for: $apkUri")
             context.startActivity(intent)
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to construct install intent", e)
+            Log.e(TAG, "Failed to start APK installation", e)
         }
     }
 }

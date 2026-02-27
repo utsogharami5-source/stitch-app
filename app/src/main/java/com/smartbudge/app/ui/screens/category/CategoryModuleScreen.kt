@@ -28,7 +28,7 @@ import java.util.*
 fun CategoryModuleScreen(
     categoryName: String,
     viewModel: CategoryModuleViewModel = hiltViewModel(),
-    onNavigateToAddTransaction: (String, Int?) -> Unit = { _, _ -> },
+    onNavigateToTransactionDetails: (Int) -> Unit = {},
     onNavigateBack: () -> Unit = {}
 ) {
     LaunchedEffect(categoryName) {
@@ -119,44 +119,13 @@ fun CategoryModuleScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(transactions) { transaction ->
-                var showOptionsDialog by remember { mutableStateOf(false) }
-
                 TransactionRow(
                     transaction = transaction,
                     surfaceColor = surfaceColor,
                     textColor = textColor,
                     mutedTextColor = mutedTextColor,
-                    onClick = { showOptionsDialog = true }
+                    onClick = { onNavigateToTransactionDetails(transaction.transaction_id) }
                 )
-
-                if (showOptionsDialog) {
-                    AlertDialog(
-                        onDismissRequest = { showOptionsDialog = false },
-                        title = { Text("Transaction Options") },
-                        text = { Text("What would you like to do with this transaction?") },
-                        confirmButton = {
-                            TextButton(
-                                onClick = {
-                                    showOptionsDialog = false
-                                    val typePath = transaction.type.lowercase()
-                                    onNavigateToAddTransaction(typePath, transaction.transaction_id)
-                                }
-                            ) {
-                                Text("Edit")
-                            }
-                        },
-                        dismissButton = {
-                            TextButton(
-                                onClick = {
-                                    showOptionsDialog = false
-                                    viewModel.deleteTransaction(transaction)
-                                }
-                            ) {
-                                Text("Delete", color = MaterialTheme.colorScheme.error)
-                            }
-                        }
-                    )
-                }
             }
             
             if (transactions.isEmpty()) {

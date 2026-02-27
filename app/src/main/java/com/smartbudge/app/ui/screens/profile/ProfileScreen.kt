@@ -46,13 +46,14 @@ fun ProfileScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(backupStatus) {
-        backupStatus?.let {
-            if (it.contains("No Internet")) {
-                showNoInternetDialog = true
-            } else {
-                snackbarHostState.showSnackbar(it)
-            }
+    val checkingStatus by viewModel.updateCheckStatus.collectAsState()
+
+    LaunchedEffect(backupStatus, checkingStatus) {
+        if (backupStatus?.contains("No Internet") == true || 
+            checkingStatus?.contains("No Internet") == true) {
+            showNoInternetDialog = true
+        } else if (backupStatus != null) {
+            snackbarHostState.showSnackbar(backupStatus!!)
         }
     }
 

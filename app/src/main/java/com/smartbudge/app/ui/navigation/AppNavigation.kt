@@ -31,6 +31,7 @@ import com.smartbudge.app.ui.screens.reports.ReportsScreen
 import com.smartbudge.app.ui.screens.goals.GoalsScreen
 import com.smartbudge.app.ui.screens.profile.ProfileScreen
 import com.smartbudge.app.ui.screens.category.CategoryModuleScreen
+import com.smartbudge.app.ui.screens.details.TransactionDetailsScreen
 import com.smartbudge.app.ui.components.SmartBottomBar
 import com.smartbudge.app.ui.theme.*
 
@@ -91,6 +92,9 @@ fun AppNavigation(authViewModel: AuthViewModel = hiltViewModel()) {
                             navController.navigate("add_transaction/$type")
                         }
                     },
+                    onNavigateToTransactionDetails = { id ->
+                        navController.navigate("transaction_details/$id")
+                    },
                     onOpenDrawer = { /* Drawer removed */ }
                 )
             }
@@ -130,14 +134,27 @@ fun AppNavigation(authViewModel: AuthViewModel = hiltViewModel()) {
                 val name = backStackEntry.arguments?.getString("name") ?: ""
                 CategoryModuleScreen(
                     categoryName = name,
-                    onNavigateToAddTransaction = { type, id ->
-                        if (id != null) {
-                            navController.navigate("add_transaction/$type?transactionId=$id")
-                        } else {
-                            navController.navigate("add_transaction/$type")
-                        }
+                    onNavigateToTransactionDetails = { id ->
+                        navController.navigate("transaction_details/$id")
                     },
                     onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
+            composable(
+                route = "transaction_details/{transactionId}",
+                arguments = listOf(
+                    navArgument("transactionId") { type = NavType.IntType }
+                )
+            ) {
+                TransactionDetailsScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToEdit = { type, id -> 
+                        navController.navigate("add_transaction/$type?transactionId=$id") {
+                            // Pop out of details screen so when user saves in AddTransactionScreen they return to Home/Category
+                            popUpTo("transaction_details/{transactionId}") { inclusive = true }
+                        }
+                    }
                 )
             }
 

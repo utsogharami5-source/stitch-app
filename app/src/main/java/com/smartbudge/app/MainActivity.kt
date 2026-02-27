@@ -18,6 +18,7 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.material3.AlertDialog
@@ -46,19 +47,20 @@ class MainActivity : ComponentActivity() {
         setContent {
             SmartBudgeTheme {
                 var updateInfo by mutableStateOf<GitHubUpdateManager.ReleaseInfo?>(null)
+                var showNoInternetDialog by mutableStateOf(false)
                 val coroutineScope = rememberCoroutineScope()
-                val updateManager = GitHubUpdateManager(this@MainActivity)
+                val updateManager = remember { GitHubUpdateManager(this@MainActivity) }
 
                 // Check for updates periodically when app starts
                 LaunchedEffect(Unit) {
-                    try {
-                        // Using BuildConfig.VERSION_NAME requires gradle setup; fallback to package manager
-                        val packageInfo = packageManager.getPackageInfo(packageName, 0)
-                        val versionName = packageInfo.versionName ?: "1.0.0"
-                        
-                        updateInfo = updateManager.checkForUpdates(versionName)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
+                    if (updateManager.isNetworkAvailable()) {
+                        try {
+                            val packageInfo = packageManager.getPackageInfo(packageName, 0)
+                            val versionName = packageInfo.versionName ?: "1.0.0"
+                            updateInfo = updateManager.checkForUpdates(versionName)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
                 
@@ -80,8 +82,13 @@ class MainActivity : ComponentActivity() {
                             },
                             confirmButton = {
                                 TextButton(onClick = {
-                                    updateInfo = null
-                                    updateManager.downloadAndInstallUpdate(release)
+                                    if (updateManager.isNetworkAvailable()) {
+                                        updateInfo = null
+                                        android.widget.Toast.makeText(this@MainActivity, "Starting Download...", android.widget.Toast.LENGTH_SHORT).show()
+                                        updateManager.downloadAndInstallUpdate(release)
+                                    } else {
+                                        showNoInternetDialog = true
+                                    }
                                 }) {
                                     Text("Download & Install")
                                 }
@@ -89,6 +96,19 @@ class MainActivity : ComponentActivity() {
                             dismissButton = {
                                 TextButton(onClick = { updateInfo = null }) {
                                     Text("Later")
+                                }
+                            }
+                        )
+                    }
+
+                    if (showNoInternetDialog) {
+                        AlertDialog(
+                            onDismissRequest = { showNoInternetDialog = false },
+                            title = { Text("No Internet Connection") },
+                            text = { Text("Please check your internet connection and try again.") },
+                            confirmButton = {
+                                TextButton(onClick = { showNoInternetDialog = false }) {
+                                    Text("OK")
                                 }
                             }
                         )

@@ -101,19 +101,24 @@ class ProfileViewModel @Inject constructor(
     val updateCheckStatus: StateFlow<String?> = _updateCheckStatus.asStateFlow()
 
     fun checkForUpdates(context: android.content.Context) {
-        if (_updateCheckStatus.value != null && _updateCheckStatus.value != "Up to date") return
-        
         viewModelScope.launch {
+            val updateManager = com.smartbudge.app.updater.GitHubUpdateManager(context)
+            if (!updateManager.isNetworkAvailable()) {
+                _updateCheckStatus.value = "No Internet Connection"
+                kotlinx.coroutines.delay(2000)
+                _updateCheckStatus.value = null
+                return@launch
+            }
+
             _updateCheckStatus.value = "Checking..."
             try {
-                val updateManager = com.smartbudge.app.updater.GitHubUpdateManager(context)
                 val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
                 val currentVersion = packageInfo.versionName ?: "1.0.0"
                 
                 val releaseInfo = updateManager.checkForUpdates(currentVersion)
                 if (releaseInfo != null) {
                     _updateCheckStatus.value = "Update Available (${releaseInfo.versionName})"
-                    // Auto-trigger the download
+                    android.widget.Toast.makeText(context, "Starting Download...", android.widget.Toast.LENGTH_SHORT).show()
                     updateManager.downloadAndInstallUpdate(releaseInfo)
                 } else {
                     _updateCheckStatus.value = "Up to date"
