@@ -1,7 +1,8 @@
 <div align="center">
   <img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp" alt="Stitch Logo" width="120"/>
 
-  # Stitch (SmartBudge)
+  #
+  (SmartBudge)
 
   **A sleek and intuitive Android application for managing your personal finances, tracking expenses, and staying on top of your budget.**
 
