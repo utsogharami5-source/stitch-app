@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <external-path name="external_files" path="." />
+    <external-files-path name="external_files_path" path="." />
+    <!-- Provide access to the Downloads directory where DownloadManager places files -->
+    <external-public-path name="downloads" path="Download" />
+</paths>
