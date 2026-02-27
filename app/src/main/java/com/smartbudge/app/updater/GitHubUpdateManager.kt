@@ -104,8 +104,12 @@ class GitHubUpdateManager(private val context: Context) {
      * Helper logic to compare semantic version strings (e.g., "1.0.0" < "1.0.1")
      */
     private fun isNewerVersion(current: String, remote: String): Boolean {
-        val currentParts = current.split(".").mapNotNull { it.toIntOrNull() }
-        val remoteParts = remote.split(".").mapNotNull { it.toIntOrNull() }
+        // Trim to avoid comparison issues with whitespace or unexpected characters
+        val curr = current.trim()
+        val rem = remote.trim()
+        
+        val currentParts = curr.split(".").mapNotNull { it.toIntOrNull() }
+        val remoteParts = rem.split(".").mapNotNull { it.toIntOrNull() }
 
         val length = maxOf(currentParts.size, remoteParts.size)
         for (i in 0 until length) {
@@ -115,6 +119,44 @@ class GitHubUpdateManager(private val context: Context) {
             if (c > r) return false
         }
         return false // Exactly the same
+    }
+
+    /**
+     * Checks if the app has permission to install other apps (unknown sources).
+     */
+    fun canInstallPackages(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.packageManager.canRequestPackageInstalls()
+        } else {
+            true // Pre-Oreo doesn't have this specific request-based permission
+        }
+    }
+
+    /**
+     * Opens the system settings to allow the user to grant "Install unknown apps" permission.
+     */
+    fun requestInstallPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val intent = Intent(android.provider.Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
+                data = Uri.parse("package:${context.packageName}")
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        }
+    }
+
+    /**
+     * Checks if storage permission is granted for legacy Android versions.
+     */
+    fun hasStoragePermission(): Boolean {
+        return if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+            androidx.core.content.ContextCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        } else {
+            true // Scoped storage on newer versions
+        }
     }
 
     /**
@@ -156,9 +198,29 @@ class GitHubUpdateManager(private val context: Context) {
                 override fun onReceive(ctxt: Context, intent: Intent) {
                     val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1L)
                     if (downloadId == id) {
-                        Log.d(TAG, "Download complete. Tricking installation.")
-                        context.unregisterReceiver(this)
-                        installApk(destinationFile)
+                        Log.d(TAG, "Download complete event received. Verifying status...")
+                        
+                        val query = DownloadManager.Query().setFilterById(downloadId)
+                        val cursor = downloadManager.query(query)
+                        
+                        if (cursor != null && cursor.moveToFirst()) {
+                            val statusColumnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
+                            val status = if (statusColumnIndex != -1) cursor.getInt(statusColumnIndex) else -1
+                            
+                            if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                                Log.d(TAG, "Download successful. Triggering installation.")
+                                context.unregisterReceiver(this)
+                                installApk(destinationFile)
+                            } else {
+                                val reasonColumnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_REASON)
+                                val reason = if (reasonColumnIndex != -1) cursor.getInt(reasonColumnIndex) else -1
+                                Log.e(TAG, "Download failed or remains incomplete. Status: $status, Reason: $reason")
+                                // Optional: Context could be used to show a toast or notification about the failure
+                            }
+                        } else {
+                            Log.e(TAG, "Failed to query download status.")
+                        }
+                        cursor?.close()
                     }
                 }
             }

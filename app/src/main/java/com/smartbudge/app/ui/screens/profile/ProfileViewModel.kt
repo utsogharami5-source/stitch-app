@@ -118,8 +118,16 @@ class ProfileViewModel @Inject constructor(
                 val releaseInfo = updateManager.checkForUpdates(currentVersion)
                 if (releaseInfo != null) {
                     _updateCheckStatus.value = "Update Available (${releaseInfo.versionName})"
-                    android.widget.Toast.makeText(context, "Starting Download...", android.widget.Toast.LENGTH_SHORT).show()
-                    updateManager.downloadAndInstallUpdate(releaseInfo)
+                    if (!updateManager.hasStoragePermission()) {
+                        _updateCheckStatus.value = "Storage Permission Required"
+                        android.widget.Toast.makeText(context, "Please grant storage permission in settings to update.", android.widget.Toast.LENGTH_LONG).show()
+                    } else if (updateManager.canInstallPackages()) {
+                        android.widget.Toast.makeText(context, "Starting Download...", android.widget.Toast.LENGTH_SHORT).show()
+                        updateManager.downloadAndInstallUpdate(releaseInfo)
+                    } else {
+                        android.widget.Toast.makeText(context, "Please allow installation from unknown sources", android.widget.Toast.LENGTH_LONG).show()
+                        updateManager.requestInstallPermission()
+                    }
                 } else {
                     _updateCheckStatus.value = "Up to date"
                     kotlinx.coroutines.delay(2000)

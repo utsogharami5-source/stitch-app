@@ -24,6 +24,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import com.smartbudge.app.updater.GitHubUpdateManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -64,6 +66,18 @@ class MainActivity : ComponentActivity() {
                     }
                 }
                 
+                val storagePermissionLauncher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.RequestPermission()
+                ) { isGranted ->
+                    if (isGranted) {
+                        // Re-trigger the update logic or if we have release info, start download
+                        // For simplicity in this flow, we'll let the user click again
+                        android.widget.Toast.makeText(this@MainActivity, "Permission granted. Please click 'Download & Install' again.", android.widget.Toast.LENGTH_SHORT).show()
+                    } else {
+                        android.widget.Toast.makeText(this@MainActivity, "Storage permission is required to download updates.", android.widget.Toast.LENGTH_LONG).show()
+                    }
+                }
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -83,9 +97,16 @@ class MainActivity : ComponentActivity() {
                             confirmButton = {
                                 TextButton(onClick = {
                                     if (updateManager.isNetworkAvailable()) {
-                                        updateInfo = null
-                                        android.widget.Toast.makeText(this@MainActivity, "Starting Download...", android.widget.Toast.LENGTH_SHORT).show()
-                                        updateManager.downloadAndInstallUpdate(release)
+                                        if (!updateManager.hasStoragePermission()) {
+                                            storagePermissionLauncher.launch(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                        } else if (!updateManager.canInstallPackages()) {
+                                            android.widget.Toast.makeText(this@MainActivity, "Please allow installation from unknown sources", android.widget.Toast.LENGTH_LONG).show()
+                                            updateManager.requestInstallPermission()
+                                        } else {
+                                            updateInfo = null
+                                            android.widget.Toast.makeText(this@MainActivity, "Starting Download...", android.widget.Toast.LENGTH_SHORT).show()
+                                            updateManager.downloadAndInstallUpdate(release)
+                                        }
                                     } else {
                                         showNoInternetDialog = true
                                     }
