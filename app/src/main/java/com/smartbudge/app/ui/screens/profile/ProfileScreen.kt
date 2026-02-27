@@ -114,7 +114,7 @@ fun ProfileScreen(
                         Text(text = "Sync with Firebase", fontWeight = FontWeight.Medium, color = textColor)
                         Text(text = "Backup your data to the cloud", fontSize = 12.sp, color = mutedTextColor)
                     }
-                    if (isLoggedIn && !isAnonymous) {
+                    if (isLoggedIn) {
                         Row {
                             TextButton(onClick = { viewModel.downloadBackup() }) {
                                 Text("Restore", color = PrimaryBlue)
@@ -134,7 +134,7 @@ fun ProfileScreen(
                             colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text(if (isAnonymous) "Backup to Cloud" else "Login to Backup")
+                            Text("Login to Backup")
                         }
                     }
                 }
