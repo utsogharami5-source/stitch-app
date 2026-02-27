@@ -41,6 +41,8 @@ fun ProfileScreen(
     val textColor = if (isDark) TextDark else TextLight
     val mutedTextColor = if (isDark) MutedTextDark else MutedTextLight
     val surfaceColor = if (isDark) CardDark else CardLight
+    
+    val context = androidx.compose.ui.platform.LocalContext.current
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -114,27 +116,31 @@ fun ProfileScreen(
                         Text(text = "Sync with Firebase", fontWeight = FontWeight.Medium, color = textColor)
                         Text(text = "Backup your data to the cloud", fontSize = 12.sp, color = mutedTextColor)
                     }
-                    if (isLoggedIn) {
-                        Row {
-                            TextButton(onClick = { viewModel.downloadBackup() }) {
-                                Text("Restore", color = PrimaryBlue)
+                    Row {
+                        TextButton(
+                            onClick = { 
+                                if (!isLoggedIn) onLoginRequired() else viewModel.downloadBackup() 
                             }
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Button(
-                                onClick = { viewModel.uploadBackup() },
-                                colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
-                                shape = RoundedCornerShape(12.dp)
-                            ) {
-                                Text("Backup")
-                            }
+                        ) {
+                            Text("Restore", color = PrimaryBlue)
                         }
-                    } else {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        
+                        val isBackupSuccess = backupStatus == "Backup Successful"
                         Button(
-                            onClick = onLoginRequired,
-                            colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
+                            onClick = {
+                                if (!isLoggedIn) {
+                                    onLoginRequired()
+                                } else if (!isBackupSuccess) {
+                                    viewModel.uploadBackup() 
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (isBackupSuccess) com.smartbudge.app.ui.theme.CardLight else PrimaryBlue
+                            ),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text("Login to Backup")
+                            Text(if (isBackupSuccess) "Backup Completed" else "Backup", color = if (isBackupSuccess) com.smartbudge.app.ui.theme.PrimaryBlue else Color.White)
                         }
                     }
                 }
@@ -171,6 +177,26 @@ fun ProfileScreen(
                 cornerRadius = 24.dp
             ) {
                 ProfileItem(label = "Currency", value = "BDT (৳)", textColor = textColor, onClick = {})
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                // Add Check for Updates button
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { viewModel.checkForUpdates(context) }
+                        .padding(vertical = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "App Version", fontSize = 16.sp, color = textColor)
+                    val checkingStatus = viewModel.updateCheckStatus.collectAsState().value
+                    Text(
+                        text = checkingStatus ?: "Check for Updates", 
+                        fontSize = 16.sp, 
+                        color = if (checkingStatus == null) com.smartbudge.app.ui.theme.PrimaryBlue else mutedTextColor, 
+                        fontWeight = FontWeight.Medium
+                    )
+                }
             }
 
         }

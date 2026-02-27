@@ -96,4 +96,35 @@ class ProfileViewModel @Inject constructor(
             _backupStatus.value = if (result.isSuccess) "Restore Successful" else "Restore Failed: ${result.exceptionOrNull()?.message}"
         }
     }
+
+    private val _updateCheckStatus = MutableStateFlow<String?>(null)
+    val updateCheckStatus: StateFlow<String?> = _updateCheckStatus.asStateFlow()
+
+    fun checkForUpdates(context: android.content.Context) {
+        if (_updateCheckStatus.value != null && _updateCheckStatus.value != "Up to date") return
+        
+        viewModelScope.launch {
+            _updateCheckStatus.value = "Checking..."
+            try {
+                val updateManager = com.smartbudge.app.updater.GitHubUpdateManager(context)
+                val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+                val currentVersion = packageInfo.versionName ?: "1.0.0"
+                
+                val releaseInfo = updateManager.checkForUpdates(currentVersion)
+                if (releaseInfo != null) {
+                    _updateCheckStatus.value = "Update Available (${releaseInfo.versionName})"
+                    // Auto-trigger the download
+                    updateManager.downloadAndInstallUpdate(releaseInfo)
+                } else {
+                    _updateCheckStatus.value = "Up to date"
+                    kotlinx.coroutines.delay(2000)
+                    _updateCheckStatus.value = null
+                }
+            } catch (e: Exception) {
+                _updateCheckStatus.value = "Check failed"
+                kotlinx.coroutines.delay(2000)
+                _updateCheckStatus.value = null
+            }
+        }
+    }
 }
