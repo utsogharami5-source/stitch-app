@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SmartBudget Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#007fff",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#0f1923",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "1.25rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .ios-shadow { shadow-[0_8px_30px_rgb(0,127,255,0.12)] }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen font-display">
+<!-- Header / Top Bar -->
+<header class="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-6 pt-12 pb-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden border border-primary/20">
+<img alt="User Profile" class="size-full object-cover" data-alt="Close up portrait of a young Bangladeshi man smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8CkV7VdZO3YGhhiXTf3H8-FTnp1j_s_weZmjkWQac8v2LhZrCJMTn9DKtLvYVoXsK1nSFND2_y8IXmqv3Tjmlcs2pCD23LIY-2HNywj1eqV2afZzaHBNf_A0sXFCs2uJ5qvLCZkwzPWaqy6YdnW6Kn1w_vlB4ITOLSQ7hYMCg8gELT70O5_dh31lCv12_3OqOo3NF6HQ-dG1wt8zLROJe_TOKbxOLhsz4Y2AaoFK6RGNqrFVkyz1boPZYY28yCZ_JMhIn1JLGyF4"/>
+</div>
+<div>
+<p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Good morning,</p>
+<h1 class="text-lg font-bold leading-none">Anik Rahman</h1>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="size-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300">
+<span class="material-symbols-outlined text-[22px]">search</span>
+</button>
+<button class="size-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 relative">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+<span class="absolute top-2.5 right-2.5 size-2 bg-red-500 rounded-full border-2 border-white dark:border-background-dark"></span>
+</button>
+</div>
+</header>
+<main class="px-6 pb-32">
+<!-- Total Balance Card -->
+<div class="mt-4 p-6 rounded-xl bg-white dark:bg-slate-900 shadow-[0_20px_50px_rgba(0,127,255,0.15)] border border-primary/5">
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Total Balance</p>
+<h2 class="text-3xl font-extrabold tracking-tight mt-1">৳ 45,280.50</h2>
+</div>
+<div class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+                    +12%
+                </div>
+</div>
+<div class="flex gap-3 mt-6">
+<button class="flex-1 bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all">
+<span class="material-symbols-outlined">add_circle</span>
+<span>Add Money</span>
+</button>
+<button class="flex-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-100 font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all">
+<span class="material-symbols-outlined">send</span>
+<span>Send</span>
+</button>
+</div>
+</div>
+<!-- Budget Progress Section -->
+<section class="mt-10">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-bold">Monthly Budget</h3>
+<button class="text-primary text-sm font-semibold">See details</button>
+</div>
+<div class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-100 dark:border-slate-800">
+<div class="flex justify-between items-end mb-2">
+<span class="text-sm font-medium text-slate-600 dark:text-slate-400">৳ 18,500 spent of ৳ 30,000</span>
+<span class="text-sm font-bold text-primary">62%</span>
+</div>
+<div class="w-full h-3 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 62%"></div>
+</div>
+<p class="mt-4 text-xs text-slate-500 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">info</span>
+                    You have ৳ 11,500 remaining for the next 12 days.
+                </p>
+</div>
+</section>
+<!-- Quick Actions Grid -->
+<section class="mt-10 grid grid-cols-4 gap-4">
+<div class="flex flex-col items-center gap-2">
+<div class="size-14 rounded-xl bg-orange-100 dark:bg-orange-900/30 text-orange-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl">bolt</span>
+</div>
+<span class="text-[11px] font-bold text-slate-600 dark:text-slate-400">Bills</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="size-14 rounded-xl bg-green-100 dark:bg-green-900/30 text-green-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl">shopping_cart</span>
+</div>
+<span class="text-[11px] font-bold text-slate-600 dark:text-slate-400">Groceries</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="size-14 rounded-xl bg-purple-100 dark:bg-purple-900/30 text-purple-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl">directions_car</span>
+</div>
+<span class="text-[11px] font-bold text-slate-600 dark:text-slate-400">Travel</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="size-14 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl">more_horiz</span>
+</div>
+<span class="text-[11px] font-bold text-slate-600 dark:text-slate-400">More</span>
+</div>
+</section>
+<!-- Recent Transactions -->
+<section class="mt-10">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-bold">Recent Transactions</h3>
+<button class="text-primary text-sm font-semibold">View all</button>
+</div>
+<div class="space-y-4">
+<!-- Transaction Item 1 -->
+<div class="flex items-center gap-4 bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-50 dark:border-slate-800">
+<div class="size-12 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-200">
+<span class="material-symbols-outlined">restaurant</span>
+</div>
+<div class="flex-1">
+<p class="font-bold text-sm">Takeout - Chillox</p>
+<p class="text-xs text-slate-500">Today, 2:30 PM</p>
+</div>
+<div class="text-right">
+<p class="font-bold text-sm text-red-500">-৳ 450.00</p>
+<p class="text-[10px] uppercase tracking-wider font-bold text-slate-400">Food</p>
+</div>
+</div>
+<!-- Transaction Item 2 -->
+<div class="flex items-center gap-4 bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-50 dark:border-slate-800">
+<div class="size-12 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-200">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<div class="flex-1">
+<p class="font-bold text-sm">Salary Deposit</p>
+<p class="text-xs text-slate-500">Yesterday, 9:00 AM</p>
+</div>
+<div class="text-right">
+<p class="font-bold text-sm text-green-500">+৳ 25,000.00</p>
+<p class="text-[10px] uppercase tracking-wider font-bold text-slate-400">Income</p>
+</div>
+</div>
+<!-- Transaction Item 3 -->
+<div class="flex items-center gap-4 bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-50 dark:border-slate-800">
+<div class="size-12 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-200">
+<span class="material-symbols-outlined">shopping_bag</span>
+</div>
+<div class="flex-1">
+<p class="font-bold text-sm">Aarong</p>
+<p class="text-xs text-slate-500">Oct 24, 6:45 PM</p>
+</div>
+<div class="text-right">
+<p class="font-bold text-sm text-red-500">-৳ 3,200.00</p>
+<p class="text-[10px] uppercase tracking-wider font-bold text-slate-400">Shopping</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-background-dark/90 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 px-6 pt-3 pb-8 flex justify-between items-center z-50">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined fill-1 font-variation-fill">home</span>
+<span class="text-[10px] font-bold">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500" href="#">
+<span class="material-symbols-outlined">pie_chart</span>
+<span class="text-[10px] font-bold">Insights</span>
+</a>
+<a class="flex flex-col items-center gap-1" href="#">
+<div class="size-12 -mt-10 bg-primary rounded-full flex items-center justify-center text-white shadow-lg shadow-primary/40 ring-4 ring-white dark:ring-background-dark">
+<span class="material-symbols-outlined text-3xl">add</span>
+</div>
+<span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 mt-1">Quick Add</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="text-[10px] font-bold">Budget</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-bold">Profile</span>
+</a>
+</nav>
+<style>
+        .font-variation-fill {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</body></html>

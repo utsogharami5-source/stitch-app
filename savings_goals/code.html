@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Savings Goals</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#007fff",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#0f1923",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .progress-bar-bg {
+            background-color: rgba(0, 127, 255, 0.1);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="relative flex h-screen w-full flex-col max-w-[430px] mx-auto bg-background-light dark:bg-background-dark overflow-hidden">
+<!-- Header -->
+<div class="flex items-center bg-white dark:bg-slate-900 p-4 pb-2 justify-between pt-12 border-b border-slate-100 dark:border-slate-800">
+<div class="text-slate-900 dark:text-slate-100 flex size-10 shrink-0 items-center justify-start">
+<span class="material-symbols-outlined text-2xl">arrow_back_ios</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-tight flex-1 text-center">Savings Goals</h2>
+<div class="flex w-10 items-center justify-end">
+<button class="flex size-10 cursor-pointer items-center justify-center rounded-full bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-2xl">add</span>
+</button>
+</div>
+</div>
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto pb-24">
+<!-- Summary Stats -->
+<div class="flex flex-wrap gap-4 p-4">
+<div class="flex min-w-[150px] flex-1 flex-col gap-1 rounded-2xl p-5 bg-white dark:bg-slate-900 shadow-sm border border-slate-100 dark:border-slate-800">
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium uppercase tracking-wider">Total Saved</p>
+<p class="text-slate-900 dark:text-slate-100 text-2xl font-bold leading-tight">৳450,000</p>
+<div class="mt-2 flex items-center gap-1 text-emerald-500 text-xs font-bold">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span>+12% this month</span>
+</div>
+</div>
+<div class="flex min-w-[150px] flex-1 flex-col gap-1 rounded-2xl p-5 bg-white dark:bg-slate-900 shadow-sm border border-slate-100 dark:border-slate-800">
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium uppercase tracking-wider">Total Target</p>
+<p class="text-slate-900 dark:text-slate-100 text-2xl font-bold leading-tight">৳1.2M</p>
+<div class="mt-2 flex items-center gap-1 text-primary text-xs font-bold">
+<span class="material-symbols-outlined text-sm">flag</span>
+<span>3 goals active</span>
+</div>
+</div>
+</div>
+<div class="px-4 py-2 flex items-center justify-between">
+<h3 class="text-slate-900 dark:text-slate-100 text-lg font-bold tracking-tight">Active Goals</h3>
+<button class="text-primary text-sm font-semibold">View All</button>
+</div>
+<!-- Goal Cards List -->
+<div class="flex flex-col gap-4 p-4">
+<!-- Hajj Fund Card -->
+<div class="flex flex-col gap-4 p-5 rounded-2xl bg-white dark:bg-slate-900 shadow-sm border border-slate-100 dark:border-slate-800">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="size-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-2xl">mosque</span>
+</div>
+<div>
+<h4 class="text-slate-900 dark:text-slate-100 font-bold text-base">Hajj Fund</h4>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium">Target: Dec 2025</p>
+</div>
+</div>
+<span class="bg-primary/10 text-primary text-[10px] font-bold px-2 py-1 rounded-full uppercase">Priority</span>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-end">
+<p class="text-slate-500 dark:text-slate-400 text-sm"><span class="text-slate-900 dark:text-slate-100 font-bold">৳300,000</span> of ৳800,000</p>
+<p class="text-primary font-bold text-sm">37.5%</p>
+</div>
+<div class="h-2 w-full progress-bar-bg rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 37.5%"></div>
+</div>
+</div>
+</div>
+<!-- New Laptop Card -->
+<div class="flex flex-col gap-4 p-5 rounded-2xl bg-white dark:bg-slate-900 shadow-sm border border-slate-100 dark:border-slate-800">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="size-12 rounded-xl bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-500">
+<span class="material-symbols-outlined text-2xl">laptop_mac</span>
+</div>
+<div>
+<h4 class="text-slate-900 dark:text-slate-100 font-bold text-base">MacBook Pro M3</h4>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium">Target: June 2024</p>
+</div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-end">
+<p class="text-slate-500 dark:text-slate-400 text-sm"><span class="text-slate-900 dark:text-slate-100 font-bold">৳120,000</span> of ৳150,000</p>
+<p class="text-orange-500 font-bold text-sm">80%</p>
+</div>
+<div class="h-2 w-full bg-orange-100 dark:bg-orange-900/20 rounded-full overflow-hidden">
+<div class="h-full bg-orange-500 rounded-full" style="width: 80%"></div>
+</div>
+</div>
+<div class="bg-orange-50 dark:bg-orange-900/10 p-2 rounded-lg border border-orange-100 dark:border-orange-900/20">
+<p class="text-orange-700 dark:text-orange-400 text-[11px] font-medium text-center">AI Suggestion: Increase daily savings by ৳200 to reach goal 2 weeks early!</p>
+</div>
+</div>
+<!-- Emergency Fund Card -->
+<div class="flex flex-col gap-4 p-5 rounded-2xl bg-white dark:bg-slate-900 shadow-sm border border-slate-100 dark:border-slate-800">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="size-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600">
+<span class="material-symbols-outlined text-2xl">shield</span>
+</div>
+<div>
+<h4 class="text-slate-900 dark:text-slate-100 font-bold text-base">Emergency Fund</h4>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium">Ongoing Security</p>
+</div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-end">
+<p class="text-slate-500 dark:text-slate-400 text-sm"><span class="text-slate-900 dark:text-slate-100 font-bold">৳30,000</span> of ৳250,000</p>
+<p class="text-emerald-600 font-bold text-sm">12%</p>
+</div>
+<div class="h-2 w-full bg-emerald-100 dark:bg-emerald-900/20 rounded-full overflow-hidden">
+<div class="h-full bg-emerald-600 rounded-full" style="width: 12%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Navigation Bar -->
+<div class="absolute bottom-0 w-full flex border-t border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-4 pb-8 pt-2">
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400 dark:text-slate-500" href="#">
+<span class="material-symbols-outlined text-2xl">home</span>
+<p class="text-[10px] font-bold uppercase tracking-wider">Home</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1">target</span>
+<p class="text-[10px] font-bold uppercase tracking-wider">Goals</p>
+</a>
+<div class="relative flex flex-1 flex-col items-center justify-center">
+<div class="absolute -top-10 size-14 rounded-full bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/40 border-4 border-white dark:border-slate-900">
+<span class="material-symbols-outlined text-2xl">insights</span>
+</div>
+<p class="mt-8 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">AI Coach</p>
+</div>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400 dark:text-slate-500" href="#">
+<span class="material-symbols-outlined text-2xl">account_balance_wallet</span>
+<p class="text-[10px] font-bold uppercase tracking-wider">Wallet</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400 dark:text-slate-500" href="#">
+<span class="material-symbols-outlined text-2xl">person</span>
+<p class="text-[10px] font-bold uppercase tracking-wider">Profile</p>
+</a>
+</div>
+</div>
+</body></html>

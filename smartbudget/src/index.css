@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --ios-bg: #FFFFFF;
+  --ios-secondary: #F2F2F7;
+  --ios-card-bg: #FFFFFF;
+  --ios-text: #000000;
+  --ios-text-muted: #6B7280;
+  --ios-border: #E5E7EB;
+}
+
+.dark {
+  --ios-bg: #000000;
+  --ios-secondary: #1C1C1E;
+  --ios-card-bg: #1C1C1E;
+  --ios-text: #FFFFFF;
+  --ios-text-muted: #8E8E93;
+  --ios-border: #38383A;
+}
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-ios-blue: #007AFF;
+  --color-ios-green: #34C759;
+  --color-ios-red: #FF3B30;
+  --color-ios-bg: var(--ios-bg);
+  --color-ios-secondary: var(--ios-secondary);
+  --color-ios-card: var(--ios-card-bg);
+  --color-ios-text: var(--ios-text);
+  --color-ios-text-muted: var(--ios-text-muted);
+  --color-ios-border: var(--ios-border);
+}
+
+body {
+  background-color: var(--ios-bg);
+  color: var(--ios-text);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.ios-card {
+  background: var(--ios-card-bg);
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.ios-button {
+  background: var(--color-ios-blue);
+  color: white;
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.ios-button:active {
+  opacity: 0.7;
+}

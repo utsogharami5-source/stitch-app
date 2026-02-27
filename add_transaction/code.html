@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#007fff",
+                        "success": "#34C759",
+                        "danger": "#FF3B30",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#0f1923",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .ios-blur {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none !important;
+            ring: 0 !important;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative mx-auto max-w-[430px] min-h-screen bg-white dark:bg-slate-950 shadow-2xl flex flex-col">
+<!-- Top Navigation Bar -->
+<div class="sticky top-0 z-10 bg-white/80 dark:bg-slate-950/80 ios-blur px-4 py-3 flex items-center justify-between border-b border-slate-100 dark:border-slate-800">
+<button class="flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-400">close</span>
+</button>
+<h2 class="text-lg font-bold tracking-tight">Add Transaction</h2>
+<button class="text-primary font-bold px-3 py-1 hover:bg-primary/10 rounded-full transition-colors">
+                Save
+            </button>
+</div>
+<div class="flex-1 overflow-y-auto pb-10">
+<!-- Transaction Type Switcher -->
+<div class="px-6 py-6">
+<div class="flex h-12 w-full items-center justify-center rounded-full bg-slate-100 dark:bg-slate-900 p-1">
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-full px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-slate-800 has-[:checked]:shadow-sm transition-all text-slate-500 dark:text-slate-400 has-[:checked]:text-success">
+<span class="text-sm font-semibold">Income</span>
+<input class="hidden" name="txn_type" type="radio" value="Income"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-full px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-slate-800 has-[:checked]:shadow-sm transition-all text-slate-500 dark:text-slate-400 has-[:checked]:text-danger">
+<span class="text-sm font-semibold">Expense</span>
+<input checked="" class="hidden" name="txn_type" type="radio" value="Expense"/>
+</label>
+</div>
+</div>
+<!-- Amount Input -->
+<div class="px-6 flex flex-col items-center">
+<span class="text-slate-400 dark:text-slate-500 text-sm font-medium mb-1">Enter Amount</span>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-bold text-slate-400">৳</span>
+<input class="bg-transparent border-none text-center text-5xl font-bold p-0 w-full focus:ring-0 placeholder-slate-300 dark:placeholder-slate-800 text-danger" placeholder="0.00" type="text"/>
+</div>
+</div>
+<!-- Details Form -->
+<div class="mt-10 px-6 space-y-6">
+<!-- Category -->
+<div class="space-y-2">
+<label class="text-sm font-semibold text-slate-500 dark:text-slate-400 ml-1">Category</label>
+<div class="relative group">
+<div class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300">
+<span class="material-symbols-outlined text-xl">category</span>
+</div>
+<select class="w-full h-16 pl-16 pr-10 bg-slate-50 dark:bg-slate-900 border-none rounded-2xl text-slate-900 dark:text-slate-100 appearance-none focus:ring-2 focus:ring-primary/20 transition-all">
+<option value="">Select a category</option>
+<option value="food">🍱 Food &amp; Dining</option>
+<option value="transport">🚗 Transportation</option>
+<option value="shopping">🛍️ Shopping</option>
+<option value="rent">🏠 Rent &amp; Utilities</option>
+<option value="health">💊 Health</option>
+</select>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+<span class="material-symbols-outlined text-slate-400">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Date Picker -->
+<div class="space-y-2">
+<label class="text-sm font-semibold text-slate-500 dark:text-slate-400 ml-1">Date</label>
+<div class="relative">
+<div class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300">
+<span class="material-symbols-outlined text-xl">calendar_today</span>
+</div>
+<input class="w-full h-16 pl-16 pr-4 bg-slate-50 dark:bg-slate-900 border-none rounded-2xl text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 transition-all" type="date" value="2023-10-27"/>
+</div>
+</div>
+<!-- Account/Wallet Selection -->
+<div class="space-y-2">
+<label class="text-sm font-semibold text-slate-500 dark:text-slate-400 ml-1">Wallet / Method</label>
+<div class="relative">
+<div class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300">
+<span class="material-symbols-outlined text-xl">account_balance_wallet</span>
+</div>
+<select class="w-full h-16 pl-16 pr-10 bg-slate-50 dark:bg-slate-900 border-none rounded-2xl text-slate-900 dark:text-slate-100 appearance-none focus:ring-2 focus:ring-primary/20 transition-all">
+<option value="bkash">bKash Wallet</option>
+<option value="cash">Cash in Hand</option>
+<option value="bank">Bank Account</option>
+</select>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+<span class="material-symbols-outlined text-slate-400">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Notes Field -->
+<div class="space-y-2">
+<label class="text-sm font-semibold text-slate-500 dark:text-slate-400 ml-1">Note (Optional)</label>
+<div class="relative">
+<div class="absolute left-4 top-5 w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300">
+<span class="material-symbols-outlined text-xl">notes</span>
+</div>
+<textarea class="w-full pl-16 pr-4 py-6 bg-slate-50 dark:bg-slate-900 border-none rounded-2xl text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 transition-all resize-none" placeholder="What was this for?" rows="3"></textarea>
+</div>
+</div>
+</div>
+<!-- Attachment Section -->
+<div class="mt-8 px-6">
+<button class="w-full border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl py-6 flex flex-col items-center justify-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors">
+<span class="material-symbols-outlined text-slate-400 text-3xl">add_a_photo</span>
+<span class="text-sm font-medium text-slate-500">Attach Receipt</span>
+</button>
+</div>
+</div>
+<!-- AI Suggestion Bubble (Floating) -->
+<div class="px-6 py-4">
+<div class="bg-primary/5 dark:bg-primary/10 border border-primary/20 rounded-2xl p-4 flex gap-4 items-start">
+<div class="bg-primary text-white p-2 rounded-xl flex shrink-0">
+<span class="material-symbols-outlined text-xl">psychology</span>
+</div>
+<div>
+<p class="text-sm font-semibold text-primary">AI Suggestion</p>
+<p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5 leading-relaxed">Based on your history, this looks like your weekly grocery shopping at Shwapno.</p>
+</div>
+</div>
+</div>
+<!-- Bottom Action Button (Mobile Fixed Alternative) -->
+<div class="p-6 pt-2">
+<button class="w-full bg-primary hover:bg-blue-600 text-white font-bold h-14 rounded-2xl shadow-lg shadow-primary/25 transition-all active:scale-[0.98]">
+                Add Transaction
+            </button>
+</div>
+</div>
+</body></html>

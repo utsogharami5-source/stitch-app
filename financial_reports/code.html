@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Financial Reports</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#007fff",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#0f1923",
+                        "ios-gray": "#F2F2F7",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="max-w-md mx-auto min-h-screen flex flex-col bg-white dark:bg-background-dark relative">
+<!-- Header -->
+<header class="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-4 py-4 flex items-center justify-between border-b border-slate-100 dark:border-slate-800">
+<div class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-slate-900 dark:text-slate-100">arrow_back_ios_new</span>
+</div>
+<h1 class="text-lg font-bold tracking-tight">Financial Reports</h1>
+<div class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-slate-900 dark:text-slate-100">share</span>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 overflow-y-auto px-4 py-6 space-y-6 no-scrollbar pb-24">
+<!-- Time Filter -->
+<div class="flex p-1 bg-ios-gray dark:bg-slate-800/50 rounded-full">
+<button class="flex-1 py-2 text-sm font-semibold rounded-full bg-white dark:bg-primary shadow-sm text-slate-900 dark:text-white transition-all">Weekly</button>
+<button class="flex-1 py-2 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700">Monthly</button>
+<button class="flex-1 py-2 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700">Yearly</button>
+</div>
+<!-- Summary Card -->
+<div class="bg-ios-gray dark:bg-slate-800/40 p-6 rounded-xl space-y-4">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Total Balance</p>
+<h2 class="text-3xl font-extrabold tracking-tight mt-1 text-slate-900 dark:text-white">৳45,200</h2>
+</div>
+<div class="flex items-center gap-1 px-2 py-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-xs font-bold">
+<span class="material-symbols-outlined text-xs">trending_up</span>
+<span>12.5%</span>
+</div>
+</div>
+<!-- Bar Chart Placeholder -->
+<div class="pt-4">
+<p class="text-xs font-bold text-slate-400 dark:text-slate-500 mb-6 uppercase tracking-widest">Income vs Expense</p>
+<div class="flex items-end justify-between h-32 gap-3">
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary/20 dark:bg-primary/10 rounded-t-md relative group h-full">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-md" style="height: 65%;"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-400 uppercase">Mon</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary/20 dark:bg-primary/10 rounded-t-md relative h-full">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-md" style="height: 45%;"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-400 uppercase">Tue</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary/20 dark:bg-primary/10 rounded-t-md relative h-full">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-md" style="height: 85%;"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-400 uppercase">Wed</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary/20 dark:bg-primary/10 rounded-t-md relative h-full">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-md" style="height: 35%;"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-400 uppercase">Thu</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary/20 dark:bg-primary/10 rounded-t-md relative h-full">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-md" style="height: 95%;"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-400 uppercase">Fri</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary/20 dark:bg-primary/10 rounded-t-md relative h-full">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-md" style="height: 55%;"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-400 uppercase">Sat</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary/20 dark:bg-primary/10 rounded-t-md relative h-full">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-md" style="height: 25%;"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-400 uppercase">Sun</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Category Breakdown -->
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<h3 class="text-lg font-bold tracking-tight">Spending by Category</h3>
+<button class="text-primary text-sm font-bold">See All</button>
+</div>
+<div class="bg-ios-gray dark:bg-slate-800/40 rounded-xl p-6 flex items-center gap-8">
+<!-- Donut Chart -->
+<div class="relative w-32 h-32 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-slate-200 dark:text-slate-700" cx="64" cy="64" fill="transparent" r="54" stroke="currentColor" stroke-width="12"></circle>
+<circle class="text-primary" cx="64" cy="64" fill="transparent" r="54" stroke="currentColor" stroke-dasharray="339" stroke-dashoffset="100" stroke-width="12"></circle>
+<circle class="text-orange-400" cx="64" cy="64" fill="transparent" r="54" stroke="currentColor" stroke-dasharray="339" stroke-dashoffset="240" stroke-width="12"></circle>
+<circle class="text-teal-400" cx="64" cy="64" fill="transparent" r="54" stroke="currentColor" stroke-dasharray="339" stroke-dashoffset="300" stroke-width="12"></circle>
+</svg>
+<div class="absolute flex flex-col items-center justify-center">
+<span class="text-[10px] font-bold text-slate-400 uppercase">Spent</span>
+<span class="text-sm font-extrabold">72%</span>
+</div>
+</div>
+<!-- Legend -->
+<div class="flex-1 space-y-3">
+<div class="flex items-center justify-between group">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<span class="text-sm font-medium text-slate-600 dark:text-slate-300">Food</span>
+</div>
+<span class="text-sm font-bold">৳12k</span>
+</div>
+<div class="flex items-center justify-between group">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-orange-400"></div>
+<span class="text-sm font-medium text-slate-600 dark:text-slate-300">Transport</span>
+</div>
+<span class="text-sm font-bold">৳8.5k</span>
+</div>
+<div class="flex items-center justify-between group">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-teal-400"></div>
+<span class="text-sm font-medium text-slate-600 dark:text-slate-300">Utilities</span>
+</div>
+<span class="text-sm font-bold">৳4.2k</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Insights Section -->
+<div class="bg-primary/10 dark:bg-primary/20 border border-primary/20 p-4 rounded-xl flex gap-4">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-white text-xl">psychology</span>
+</div>
+<div>
+<h4 class="text-sm font-bold text-primary">AI Insight</h4>
+<p class="text-sm text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">Your food spending is 15% higher than last week. Try cutting back on weekend deliveries to save ৳2,000.</p>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation -->
+<nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/90 dark:bg-background-dark/90 backdrop-blur-xl border-t border-slate-100 dark:border-slate-800 px-6 py-3 flex justify-between items-center z-50">
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined font-fill">pie_chart</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Reports</span>
+</a>
+<div class="relative -top-6">
+<button class="w-14 h-14 bg-primary rounded-full shadow-lg shadow-primary/40 flex items-center justify-center text-white ring-4 ring-white dark:ring-background-dark">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+</div>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Wallet</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Profile</span>
+</a>
+</nav>
+</div>
+</body></html>

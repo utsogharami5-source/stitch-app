@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "760918917571",
+    "project_id": "smartbudge-bb99",
+    "storage_bucket": "smartbudge-bb99.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:760918917571:android:f2871f0d4ec41edac37d76",
+        "android_client_info": {
+          "package_name": "com.smartbudge.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcllSrt4KRf6nl1Rwqwlx9oGIL3MLkRf4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

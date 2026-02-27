@@ -1,0 +1,75 @@
+This is a comprehensive, **Startup-Level Product Requirements Document (PRD)** for **SmartBudget**. This prompt is optimized for an AI developer, a technical co-founder, or a UI/UX designer to begin immediate execution.
+
+---
+
+# 🚀 Project Brief: SmartBudget (AI-Powered Finance App)
+
+**Objective:** Build a high-performance, localized personal finance management app for the Bangladesh market, featuring a clean **iOS-style minimalist aesthetic** (White & Blue).
+
+## 🎨 1. Design System & UI Style (iOS Theme)
+
+* **Color Palette:** * **Primary Background:** `#FFFFFF` (Pure White)
+* **Secondary/Cards:** `#F2F2F7` (Light Grey-Blue tint)
+* **Action Color:** `#007AFF` (Classic iOS Blue)
+* **Success (Income):** `#34C759` | **Danger (Expense):** `#FF3B30`
+
+
+* **Visual Style:** Rounded corners (15dp+), high "White Space" usage, soft shadows, and SF Pro-style typography. No heavy borders.
+
+---
+
+## 📊 2. Database Schema (ER Diagram)
+
+* **User:** `user_id (PK)`, `name`, `email`, `monthly_budget`, `created_at`.
+* **Transaction:** `transaction_id (PK)`, `user_id (FK)`, `type (Income/Expense)`, `amount`, `category_id (FK)`, `date`, `note`.
+* **Category:** `category_id (PK)`, `user_id (FK, optional)`, `name`, `type`, `icon`, `color`.
+* **SavingsGoal:** `goal_id (PK)`, `user_id (FK)`, `title`, `target_amount`, `saved_amount`, `deadline`.
+* **BudgetAlert:** `alert_id (PK)`, `user_id (FK)`, `category_id`, `limit_amount`, `threshold_percentage`.
+
+---
+
+## 📱 3. UI/UX Wireframe Structure
+
+* **Home:** Greeting, Total Balance Card (White with Blue shadow), Budget Progress Bar, Recent Transactions list.
+* **Add Transaction:** Tabbed view (Income/Expense), Amount input, Category dropdown, Date picker.
+* **Reports:** Weekly/Monthly/Yearly filters, Bar Charts for comparison, Pie Charts for categories, Export PDF.
+* **Goals:** Progress cards for savings targets.
+* **Profile:** Currency settings, Dark Mode toggle, Cloud Backup (Firebase), Pro Upgrade.
+
+---
+
+## 🛠 4. Tech Stack & Architecture
+
+* **Language:** Kotlin
+* **Architecture:** MVVM + Clean Architecture
+* **UI Framework:** Jetpack Compose
+* **Local Storage:** Room Database (Offline-first)
+* **Cloud/Sync:** Firebase Auth & Firestore
+* **Dependency Injection:** Hilt
+* **Async Processing:** Coroutines & Flow
+
+---
+
+## 📈 5. Business & Market Strategy
+
+* **Problem:** 70% of people don't track expenses; lack of localized apps for Bangladesh.
+* **Unique Selling Points (USP):** 1.  **SMS Auto-detection** (Automatic expense logging from bank/MFS SMS).
+2.  **AI Predictions** for future spending.
+3.  **Bilingual Support** (Bangla + English).
+* **Monetization:** Freemium model with Pro subscriptions for advanced analytics and cloud sync.
+
+---
+
+## 📝 6. Play Store Presence
+
+* **Short Description:** Take control of your money with SmartBudget 💰📊.
+* **Full Description:** A powerful, easy-to-use finance tracker for students, freelancers, and professionals. Features include daily tracking, budget limits, visual charts, and PDF reports.
+
+---
+
+## 💼 7. Investor Pitch Structure
+
+* **Slides:** Problem → Solution → Market Opportunity (170M people, growing Fintech) → Product Demo → Business Model → Competitive Advantage (Localized/AI) → Revenue Projections → Team → Investment Ask ($50K Seed).
+
+---
+
