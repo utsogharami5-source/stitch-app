@@ -1,0 +1,122 @@
+{
+  "project_info": {
+    "project_number": "760918917571",
+    "firebase_url": "https://smartbudge-bb99-default-rtdb.firebaseio.com",
+    "project_id": "smartbudge-bb99",
+    "storage_bucket": "smartbudge-bb99.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:760918917571:android:c42f30f99774f17ec37d76",
+        "android_client_info": {
+          "package_name": "com.coinflow.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "760918917571-sd689jo42b030e09m65pjrmm2ov1cs2a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.coinflow.app",
+            "certificate_hash": "71ba6691caf50794d5179af9a66765bf96e35fe5"
+          }
+        },
+        {
+          "client_id": "760918917571-fmsstqnndu7sinp6k03hc2g59tvrdn0h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcllSrt4KRf6nl1Rwqwlx9oGIL3MLkRf4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "760918917571-fmsstqnndu7sinp6k03hc2g59tvrdn0h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:760918917571:android:5651ebd796dd9c8fc37d76",
+        "android_client_info": {
+          "package_name": "com.example.smart_budget"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "760918917571-c0skbjppb5loj47eqimaraa3pasa3pnn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.smart_budget",
+            "certificate_hash": "71ba6691caf50794d5179af9a66765bf96e35fe5"
+          }
+        },
+        {
+          "client_id": "760918917571-fmsstqnndu7sinp6k03hc2g59tvrdn0h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcllSrt4KRf6nl1Rwqwlx9oGIL3MLkRf4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "760918917571-fmsstqnndu7sinp6k03hc2g59tvrdn0h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:760918917571:android:f2871f0d4ec41edac37d76",
+        "android_client_info": {
+          "package_name": "com.smartbudge.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "760918917571-btb3mlpgtg4smh3qo1ve4oek6mice1ac.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.smartbudge.app",
+            "certificate_hash": "04399c751510859aa2ab2fbc8326c15851c9b7a1"
+          }
+        },
+        {
+          "client_id": "760918917571-fmsstqnndu7sinp6k03hc2g59tvrdn0h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcllSrt4KRf6nl1Rwqwlx9oGIL3MLkRf4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "760918917571-fmsstqnndu7sinp6k03hc2g59tvrdn0h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
