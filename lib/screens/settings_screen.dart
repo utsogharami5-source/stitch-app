@@ -451,7 +451,7 @@ class SettingsScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text('Data Export', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                Text('${appState.transactions.length} transactions', style: TextStyle(color: Colors.grey.shade500, fontSize: 11)),
+                Text('${appState.allTransactions.length} transactions', style: TextStyle(color: Colors.grey.shade500, fontSize: 11)),
               ],
             ),
           ),
@@ -510,7 +510,7 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Future<void> _exportCSV(BuildContext context, AppState appState) async {
-    if (appState.transactions.isEmpty) {
+    if (appState.allTransactions.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('No transactions to export!')),
       );
@@ -521,7 +521,7 @@ class SettingsScreen extends StatelessWidget {
       final buffer = StringBuffer();
       buffer.writeln('Date,Title,Type,Amount (${appState.currencyCode}),Category,Note');
       
-      for (var tx in appState.transactions) {
+      for (var tx in appState.allTransactions) {
         final catName = appState.categories
             .firstWhere((c) => c.id == tx.categoryId, orElse: () => Category(id: '', name: 'Other', color: 'FF999999', icon: 'category'))
             .name;
@@ -540,7 +540,7 @@ class SettingsScreen extends StatelessWidget {
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Exported ${appState.transactions.length} transactions!'), duration: const Duration(seconds: 2)),
+          SnackBar(content: Text('Exported ${appState.allTransactions.length} transactions!'), duration: const Duration(seconds: 2)),
         );
       }
     } catch (e) {

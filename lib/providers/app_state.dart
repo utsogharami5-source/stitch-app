@@ -391,7 +391,8 @@ class AppState extends ChangeNotifier {
   }
 
   Future<void> importTransactionsFromCsv(String csvContent) async {
-    final List<List<dynamic>> rows = const CsvToListConverter().convert(csvContent);
+    String normalizedContent = csvContent.replaceAll('\r\n', '\n');
+    final List<List<dynamic>> rows = const CsvToListConverter(eol: '\n').convert(normalizedContent);
     if (rows.length < 2) return; // Only header or empty
 
     _isLoading = true;
@@ -469,7 +470,7 @@ class AppState extends ChangeNotifier {
         String categoryId;
         final existingCat = _categories.firstWhere(
           (c) => c.name.toLowerCase() == categoryName.toLowerCase(),
-          orElse: () => Category(id: 'unknown', name: 'Other', color: 'gray', icon: 'help'),
+          orElse: () => Category(id: 'unknown', name: 'Other', color: 'FF999999', icon: 'help'),
         );
 
         if (existingCat.id == 'unknown' && categoryName.isNotEmpty) {

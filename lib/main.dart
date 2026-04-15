@@ -83,11 +83,6 @@ class AuthWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<AppState>(context);
-    
-    // Wait until FirebaseAuth has determined the initial state
-    if (!appState.isAuthReady) {
-      return const Scaffold(body: SizedBox.shrink());
-    }
 
     if (appState.isAuthenticated) {
       return const MainLayoutScreen();

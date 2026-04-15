@@ -284,7 +284,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   }
 
   void _exportData(BuildContext context, AppState appState) {
-    if (appState.transactions.isEmpty) {
+    if (appState.allTransactions.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('No transactions to export!')),
       );
