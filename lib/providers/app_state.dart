@@ -293,10 +293,24 @@ class AppState extends ChangeNotifier {
   }
 
   Future<void> deleteTransaction(String id) async {
+    if (_currentUser != null) {
+      await _syncService.deleteCloudItem(_currentUser!.uid, 'transactions', id);
+    }
     await DatabaseService.instance.deleteTransaction(id);
     await loadData();
     if (_currentUser != null) {
       _syncService.syncTransactions(_currentUser!.uid);
+    }
+  }
+
+  Future<void> deleteRecurring(String id) async {
+    if (_currentUser != null) {
+      await _syncService.deleteCloudItem(_currentUser!.uid, 'recurring', id);
+    }
+    await DatabaseService.instance.deleteRecurring(id);
+    await loadData();
+    if (_currentUser != null) {
+      _syncService.syncRecurring(_currentUser!.uid);
     }
   }
 
@@ -339,8 +353,41 @@ class AppState extends ChangeNotifier {
   }
 
   Future<void> deleteAllData() async {
+    if (_currentUser != null) {
+      await _syncService.deleteUserData(_currentUser!.uid);
+    }
     await DatabaseService.instance.deleteAllData();
     await loadData();
+  }
+
+  Future<void> deleteUserAccount() async {
+    if (_currentUser == null) return;
+    
+    _isLoading = true;
+    notifyListeners();
+    
+    try {
+      final uid = _currentUser!.uid;
+      
+      // 1. Delete remote data
+      await _syncService.deleteUserData(uid);
+      
+      // 2. Delete local data
+      await DatabaseService.instance.deleteAllData();
+      await loadData();
+      
+      // 3. Delete Auth account
+      await _authService.deleteAccount();
+      
+      _currentUser = null;
+      _isGuestMode = false;
+    } catch (e) {
+      debugPrint('Error deleting account: $e');
+      rethrow;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<void> importTransactionsFromCsv(String csvContent) async {
@@ -359,12 +406,19 @@ class AppState extends ChangeNotifier {
       // Fuzzy matching for headers
       for (int i = 0; i < firstRow.length; i++) {
         final h = firstRow[i];
-        if (h.contains('date')) dateIdx = i;
-        else if (h.contains('title') || h.contains('description') || h.contains('detail')) titleIdx = i;
-        else if (h.contains('type')) typeIdx = i;
-        else if (h.contains('amount') || h.contains('sum') || h.contains('value')) amountIdx = i;
-        else if (h.contains('cat')) categoryIdx = i;
-        else if (h.contains('note') || h.contains('memo')) noteIdx = i;
+        if (h.contains('date')) {
+          dateIdx = i;
+        } else if (h.contains('title') || h.contains('description') || h.contains('detail')) {
+          titleIdx = i;
+        } else if (h.contains('type')) {
+          typeIdx = i;
+        } else if (h.contains('amount') || h.contains('sum') || h.contains('value')) {
+          amountIdx = i;
+        } else if (h.contains('cat')) {
+          categoryIdx = i;
+        } else if (h.contains('note') || h.contains('memo')) {
+          noteIdx = i;
+        }
       }
 
       bool hasHeader = dateIdx != -1 || titleIdx != -1 || amountIdx != -1;

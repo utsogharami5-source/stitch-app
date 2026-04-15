@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'providers/app_state.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/analytics_screen.dart';
@@ -8,11 +9,25 @@ import 'screens/budgets_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/login_screen.dart';
 import 'widgets/add_transaction_modal.dart';
-import 'screens/splash_screen.dart';
+import 'services/notification_service.dart';
+
+/// FCM background handler — must be a top-level function
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  debugPrint('Background message: ${message.messageId}');
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  
+  // Set up FCM background handler
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  
+  // Initialize notifications
+  await NotificationService.instance.initialize();
+  
   runApp(
     ChangeNotifierProvider(
       create: (context) => AppState(),
@@ -71,7 +86,7 @@ class AuthWrapper extends StatelessWidget {
     
     // Wait until FirebaseAuth has determined the initial state
     if (!appState.isAuthReady) {
-      return const SplashScreen();
+      return const Scaffold(body: SizedBox.shrink());
     }
 
     if (appState.isAuthenticated) {

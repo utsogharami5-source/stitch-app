@@ -246,6 +246,20 @@ class SettingsScreen extends StatelessWidget {
                     ),
                     child: const Text('Delete My Data', style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
+                  if (isAuthenticated) ...[
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () => _confirmDeleteAccount(context, appState),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size.fromHeight(56),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        elevation: 0,
+                      ),
+                      child: const Text('Permanently Delete Account', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -735,6 +749,68 @@ class SettingsScreen extends StatelessWidget {
               }
             },
             child: const Text('Delete Everything', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmDeleteAccount(BuildContext context, AppState appState) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: const Text('Delete Account Permanently?', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'This is a permanent action that cannot be reversed. By deleting your account, you will:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 16),
+            Text('• Permanently lose access to your CoinFlow profile.'),
+            Text('• Delete all your synced transactions and goals from the cloud.'),
+            Text('• Wipe all local data from this device.'),
+            SizedBox(height: 16),
+            Text(
+              'Note: You may be asked to re-authenticate for security reasons before the deletion proceeds.',
+              style: TextStyle(fontSize: 12, color: Colors.grey),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              try {
+                await appState.deleteUserAccount();
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Your account and all data have been permanently deleted.'), duration: Duration(seconds: 5)),
+                  );
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Deletion failed: $e\n\nPlease try signing out and signing in again to refresh your session.'),
+                      backgroundColor: Colors.red,
+                      duration: const Duration(seconds: 8),
+                    ),
+                  );
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+              elevation: 0,
+            ),
+            child: const Text('Delete Permanently', style: TextStyle(fontWeight: FontWeight.bold)),
           ),
         ],
       ),

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart' hide Transaction;
 import '../providers/app_state.dart';
 import '../models/models.dart';
 import '../widgets/add_transaction_modal.dart';
+import '../services/notification_service.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -37,22 +39,26 @@ class DashboardScreen extends StatelessWidget {
                           : null,
                     ),
                     const SizedBox(width: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _getGreeting(),
-                          style: TextStyle(fontSize: 12, color: Colors.grey.shade500, fontWeight: FontWeight.w600),
-                        ),
-                        Text(
-                          user?.displayName ?? 'Guest',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: theme.colorScheme.onSurface,
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _getGreeting(),
+                            style: TextStyle(fontSize: 12, color: Colors.grey.shade500, fontWeight: FontWeight.w600),
                           ),
-                        ),
-                      ],
+                          Text(
+                            user?.displayName ?? 'Guest',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.onSurface,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -72,11 +78,7 @@ class DashboardScreen extends StatelessWidget {
                       children: [
                         IconButton(
                           icon: const Icon(Icons.notifications_outlined),
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('No new notifications'), duration: Duration(seconds: 1)),
-                            );
-                          },
+                          onPressed: () => _showNotificationsSheet(context),
                         ),
                         Positioned(
                           right: 8,
@@ -145,15 +147,18 @@ class DashboardScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 GestureDetector(
                   onTap: () => appState.setTransactionFilter('all'),
-                  child: Text(
-                    appState.formatCurrency(
-                      appState.transactionFilter == 'all' ? appState.totalBalance :
-                      appState.transactionFilter == 'income' ? appState.totalIncome : appState.totalExpenses
-                    ),
-                    style: const TextStyle(
-                      fontSize: 44,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -1.5,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      appState.formatCurrency(
+                        appState.transactionFilter == 'all' ? appState.totalBalance :
+                        appState.transactionFilter == 'income' ? appState.totalIncome : appState.totalExpenses
+                      ),
+                      style: const TextStyle(
+                        fontSize: 44,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -1.5,
+                      ),
                     ),
                   ),
                 ),
@@ -274,6 +279,175 @@ class DashboardScreen extends StatelessWidget {
     if (hour >= 12 && hour < 17) return 'Good Afternoon ☀️';
     if (hour >= 17 && hour < 21) return 'Good Evening 🌙';
     return 'Good Night 🌜';
+  }
+
+  void _showNotificationsSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      useSafeArea: true,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.75,
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        ),
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(2))),
+            ),
+            const SizedBox(height: 24),
+            const Text('Notifications', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 4),
+            Text('Your latest updates', style: TextStyle(color: Colors.grey.shade500, fontSize: 14)),
+            const SizedBox(height: 20),
+            Expanded(
+              child: FutureBuilder<List<Map<String, dynamic>>>(
+                future: NotificationService.instance.getNotifications(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  
+                  final notifications = snapshot.data ?? [];
+                  
+                  if (notifications.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.notifications_off_outlined, size: 64, color: Colors.grey.shade300),
+                          const SizedBox(height: 16),
+                          Text('No notifications yet', style: TextStyle(color: Colors.grey.shade500, fontWeight: FontWeight.w500, fontSize: 16)),
+                          const SizedBox(height: 8),
+                          Text('You\'ll see updates here when we send them.', style: TextStyle(color: Colors.grey.shade400, fontSize: 13)),
+                        ],
+                      ),
+                    );
+                  }
+                  
+                  return ListView.builder(
+                    itemCount: notifications.length,
+                    itemBuilder: (context, index) {
+                      final n = notifications[index];
+                      final title = n['title'] ?? 'Notification';
+                      final body = n['body'] ?? '';
+                      final type = n['type'] ?? 'general';
+                      final source = n['source'] ?? 'broadcast';
+                      final createdAt = n['created_at'];
+                      
+                      String timeText = '';
+                      if (createdAt != null && createdAt is Timestamp) {
+                        final dt = createdAt.toDate();
+                        final diff = DateTime.now().difference(dt);
+                        if (diff.inMinutes < 1) {
+                          timeText = 'Just now';
+                        } else if (diff.inHours < 1) {
+                          timeText = '${diff.inMinutes}m ago';
+                        } else if (diff.inDays < 1) {
+                          timeText = '${diff.inHours}h ago';
+                        } else if (diff.inDays < 7) {
+                          timeText = '${diff.inDays}d ago';
+                        } else {
+                          timeText = DateFormat('MMM d').format(dt);
+                        }
+                      }
+                      
+                      IconData icon;
+                      Color iconColor;
+                      switch (type) {
+                        case 'update':
+                          icon = Icons.system_update;
+                          iconColor = Colors.blue;
+                          break;
+                        case 'promo':
+                          icon = Icons.local_offer;
+                          iconColor = Colors.purple;
+                          break;
+                        case 'alert':
+                          icon = Icons.warning_amber_rounded;
+                          iconColor = Colors.orange;
+                          break;
+                        default:
+                          icon = Icons.campaign_outlined;
+                          iconColor = Theme.of(context).primaryColor;
+                      }
+                      
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: Colors.grey.shade200),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withAlpha(8),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: iconColor.withAlpha(25),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Icon(icon, color: iconColor, size: 22),
+                            ),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          title,
+                                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                                        ),
+                                      ),
+                                      if (source == 'personal')
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                          decoration: BoxDecoration(
+                                            color: Colors.blue.withAlpha(20),
+                                            borderRadius: BorderRadius.circular(6),
+                                          ),
+                                          child: const Text('For you', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.blue)),
+                                        ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(body, style: TextStyle(color: Colors.grey.shade600, fontSize: 13, height: 1.4)),
+                                  if (timeText.isNotEmpty) ...[
+                                    const SizedBox(height: 6),
+                                    Text(timeText, style: TextStyle(color: Colors.grey.shade400, fontSize: 11, fontWeight: FontWeight.w600)),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _selectMonth(BuildContext context, AppState appState) async {

@@ -4,7 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  bool _initialized = false;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   // Stream of auth state changes
   Stream<User?> get user => _auth.authStateChanges();
@@ -12,25 +12,15 @@ class AuthService {
   // Get current user
   User? get currentUser => _auth.currentUser;
 
-  Future<void> _ensureInitialized() async {
-    if (!_initialized) {
-      await GoogleSignIn.instance.initialize();
-      _initialized = true;
-    }
-  }
-
-  // Sign in with Google (google_sign_in v7.x API)
+  // Sign in with Google
   Future<UserCredential?> signInWithGoogle() async {
     try {
-      await _ensureInitialized();
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) return null;
 
-      // Authenticate — replaces the old signIn() method
-      final googleUser = await GoogleSignIn.instance.authenticate();
-
-
-      // Get idToken from authentication
-      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       final OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
@@ -64,11 +54,25 @@ class AuthService {
   // Sign out
   Future<void> signOut() async {
     try {
-      await _ensureInitialized();
-      await GoogleSignIn.instance.disconnect();
       await _auth.signOut();
+      await _googleSignIn.signOut();
     } catch (e) {
       debugPrint('Error signing out: $e');
+      rethrow;
+    }
+  }
+
+  // Delete account
+  Future<void> deleteAccount() async {
+    try {
+      final user = _auth.currentUser;
+      if (user != null) {
+        await user.delete();
+        await _googleSignIn.signOut();
+      }
+    } catch (e) {
+      debugPrint('Error deleting account: $e');
+      rethrow;
     }
   }
 }

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import '../providers/app_state.dart';
 import '../models/models.dart';
+import '../services/permission_service.dart';
 
 class AddTransactionModal extends StatefulWidget {
   final Transaction? initialTransaction;
@@ -188,16 +191,18 @@ class _AddTransactionModalState extends State<AddTransactionModal> {
                 children: [
                   // Header
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       IconButton(
                         icon: const Icon(Icons.close),
                         onPressed: () => Navigator.pop(context),
                       ),
-                        Text(
+                      Expanded(
+                        child: Text(
                           widget.initialTransaction == null ? 'Add Transaction' : 'Edit Transaction',
                           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
                         ),
+                      ),
                       const SizedBox(width: 48),
                     ],
                   ),
@@ -312,11 +317,7 @@ class _AddTransactionModalState extends State<AddTransactionModal> {
                         child: _buildActionButton(
                           icon: Icons.camera_alt_outlined,
                           label: 'Scan Receipt',
-                          onTap: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('OCR Scanning coming soon!')),
-                            );
-                          },
+                          onTap: () => _scanReceipt(context),
                           isBordered: true,
                         ),
                       ),
@@ -431,6 +432,121 @@ class _AddTransactionModalState extends State<AddTransactionModal> {
         ],
       ),
     );
+  }
+
+  Future<void> _scanReceipt(BuildContext context) async {
+    final hasPermission = await PermissionService.instance.requestCameraPermission(context);
+    if (!hasPermission) return;
+
+    // Pick image
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(source: ImageSource.camera, maxWidth: 1200);
+      
+      if (image == null) return;
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Scanning receipt...'), duration: Duration(seconds: 2)),
+        );
+      }
+
+      // OCR Recognition
+      final inputImage = InputImage.fromFilePath(image.path);
+      final textRecognizer = TextRecognizer();
+      final RecognizedText recognizedText = await textRecognizer.processImage(inputImage);
+      await textRecognizer.close();
+
+      if (recognizedText.text.isEmpty) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('No text found on receipt. Try again with better lighting.')),
+          );
+        }
+        return;
+      }
+
+      // Parse amount from text — look for currency patterns
+      String? detectedAmount;
+      String? detectedTitle;
+      final lines = recognizedText.text.split('\n');
+      
+      // Try to find amounts (patterns like $12.34, 12.34, Total: 12.34)
+      final amountRegex = RegExp(r'[\$৳€£₹¥₩]?\s*(\d{1,3}(?:[,\s]\d{3})*(?:\.\d{1,2})?)', caseSensitive: false);
+      double maxAmount = 0;
+
+      for (var line in lines) {
+        final lowerLine = line.toLowerCase();
+        // Prioritize lines with "total", "amount", "grand total", etc.
+        if (lowerLine.contains('total') || lowerLine.contains('amount') || lowerLine.contains('due') || lowerLine.contains('sum')) {
+          final matches = amountRegex.allMatches(line);
+          for (var match in matches) {
+            final numStr = match.group(1)?.replaceAll(RegExp(r'[,\s]'), '') ?? '';
+            final val = double.tryParse(numStr) ?? 0;
+            if (val > maxAmount) {
+              maxAmount = val;
+              detectedAmount = numStr;
+            }
+          }
+        }
+      }
+
+      // Fallback: just find the largest number
+      if (detectedAmount == null) {
+        for (var line in lines) {
+          final matches = amountRegex.allMatches(line);
+          for (var match in matches) {
+            final numStr = match.group(1)?.replaceAll(RegExp(r'[,\s]'), '') ?? '';
+            final val = double.tryParse(numStr) ?? 0;
+            if (val > maxAmount) {
+              maxAmount = val;
+              detectedAmount = numStr;
+            }
+          }
+        }
+      }
+
+      // Try to detect store/merchant name (usually first non-empty line)
+      for (var line in lines) {
+        final trimmed = line.trim();
+        if (trimmed.length > 2 && !RegExp(r'^\d+$').hasMatch(trimmed)) {
+          detectedTitle = trimmed;
+          break;
+        }
+      }
+
+      // Apply detected values
+      if (mounted) {
+        setState(() {
+          if (detectedAmount != null) {
+            _amount = detectedAmount;
+          }
+          if (detectedTitle != null && _titleController.text.isEmpty) {
+            _titleController.text = detectedTitle;
+          }
+          _type = 'expense'; // Receipts are usually expenses
+        });
+      }
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              detectedAmount != null 
+                ? 'Found amount: $detectedAmount${detectedTitle != null ? ' from $detectedTitle' : ''}'
+                : 'Could not auto-detect amount. Please enter manually.',
+            ),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Scan failed: $e')),
+        );
+      }
+    }
   }
 
   Widget _buildTypeButton(String label, String value) {

@@ -108,13 +108,13 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   children: [
                     const Spacer(flex: 3),
                     
-                    // App Branding with real logo
+                    // App Branding with real logo — NO ClipOval
                     Center(
                       child: Container(
-                        padding: const EdgeInsets.all(24),
+                        width: 130,
+                        height: 130,
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.surface.withAlpha(150),
-                          shape: BoxShape.circle,
+                          borderRadius: BorderRadius.circular(32),
                           boxShadow: [
                             BoxShadow(
                               color: theme.primaryColor.withAlpha(30),
@@ -123,14 +123,21 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                             ),
                           ],
                         ),
-                        child: ClipOval(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(32),
                           child: Image.asset(
                             isLight ? 'assets/images/logo_light.png' : 'assets/images/logo_dark.png',
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.contain,
+                            width: 130,
+                            height: 130,
+                            fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) => 
-                              Icon(Icons.account_balance_wallet, size: 64, color: theme.primaryColor),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: theme.primaryColor.withAlpha(40),
+                                  borderRadius: BorderRadius.circular(32),
+                                ),
+                                child: Icon(Icons.account_balance_wallet, size: 64, color: theme.primaryColor),
+                              ),
                           ),
                         ),
                       ),
@@ -226,12 +233,11 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Image.network(
-                                        'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_"G"_logo.svg/1024px-Google_"G"_logo.svg.png',
+                                      Container(
                                         width: 22,
                                         height: 22,
-                                        errorBuilder: (context, error, stackTrace) => 
-                                          const Icon(Icons.login, size: 22),
+                                        alignment: Alignment.center,
+                                        child: const Text('G', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Color(0xFF4285F4))),
                                       ),
                                       const SizedBox(width: 14),
                                       const Text(

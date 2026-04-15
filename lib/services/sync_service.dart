@@ -333,4 +333,38 @@ class SyncService {
           .toList();
     });
   }
+
+  /// Permanently delete a single item from a specific cloud subcollection
+  Future<void> deleteCloudItem(String userId, String collectionName, String itemId) async {
+    try {
+      await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection(collectionName)
+          .doc(itemId)
+          .delete();
+      debugPrint('Cloud Sync: Deleted $itemId from $collectionName for user $userId');
+    } catch (e) {
+      debugPrint('Cloud Sync Deletion Error: $e');
+    }
+  }
+
+  /// Permanently delete all user data from Firestore
+  Future<void> deleteUserData(String userId) async {
+    final batch = _firestore.batch();
+    
+    // 1. Delete user profile
+    batch.delete(_firestore.collection('users').doc(userId));
+    
+    // Attempt to delete the main subcollections
+    final collections = ['categories', 'transactions', 'goals', 'recurring'];
+    for (var coll in collections) {
+      final snap = await _firestore.collection('users').doc(userId).collection(coll).get();
+      for (var doc in snap.docs) {
+        batch.delete(doc.reference);
+      }
+    }
+    
+    await batch.commit();
+  }
 }

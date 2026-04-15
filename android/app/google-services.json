@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "760918917571-rlrmsddjhcot8kijam280dbqpkeao6j6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.coinflow.app",
+            "certificate_hash": "fef0c529fdee36e64e58e9f1b056fc4b52495876"
+          }
+        },
+        {
           "client_id": "760918917571-sd689jo42b030e09m65pjrmm2ov1cs2a.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
